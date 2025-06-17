@@ -1,87 +1,77 @@
 import urllib
+from typing import Optional, Dict, Any
 
 import pandas as pd
 import mysql.connector
 from sqlalchemy import create_engine
 
 from helper.logging import logger
-
-password = "Sport@Bet19"
-encoded_password = urllib.parse.quote_plus(password)
-connection_string = f"mysql+pymysql://sport_bet:{encoded_password}@146.59.148.113:51724/ai_engine_db"
+from models.model_config import AlgorithmConfig
 
 
 class DatabaseConnector:
-    """Classe pour gérer les connexions à la base de données MySQL."""
+    """Gestionnaire de connexion à la base de données MySQL."""
 
-    def __init__(self, host: str, port: str, user: str, password: str, database: str):
-        """
-        Initialise la connexion à la base de données.
-
-        Args:
-            host: Hôte de la base de données
-            user: Nom d'utilisateur
-            password: Mot de passe
-            database: Nom de la base de données
-        """
-        self.host = host
-        self.port = port
-        self.user = user
-        self.password = password
-        self.database = database
+    def __init__(self, config: AlgorithmConfig):
+        """Initialise la connexion avec la configuration."""
+        self.config = config
         self.connection = None
         self.engine = None
+
+        # Construction de la chaîne de connexion
+        encoded_password = urllib.parse.quote_plus(config.db_password)
+        self.connection_string = (
+            f"mysql+pymysql://{config.db_user}:{encoded_password}@"
+            f"{config.db_host}:{config.db_port}/{config.db_name}"
+        )
 
     def connect(self) -> None:
         """Établit la connexion à la base de données."""
         try:
             self.connection = mysql.connector.connect(
-                host=self.host,
-                port=self.port,
-                user=self.user,
-                password=self.password,
-                database=self.database
+                host=self.config.db_host,
+                port=self.config.db_port,
+                user=self.config.db_user,
+                password=self.config.db_password,
+                database=self.config.db_name,
+                charset='utf8mb4',
+                autocommit=True
             )
-            self.engine = create_engine(f"mysql+pymysql://sport_bet:{encoded_password}@146.59.148.113:51724/ai_engine_db") #create_engine(f"mysql+pymysql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}")
-            logger.info("Connexion à la base de données établie avec succès.")
+
+            self.engine = create_engine(
+                self.connection_string,
+                pool_pre_ping=True,
+                pool_recycle=3600
+            )
+
+            logger.info("Connexion à la base de données établie")
+
         except Exception as e:
-            logger.error(f"Erreur lors de la connexion à la base de données: {e}")
+            logger.error(f"Erreur connexion DB: {e}")
             raise
 
     def disconnect(self) -> None:
-        """Ferme la connexion à la base de données."""
-        if self.connection:
+        """Ferme la connexion."""
+        if self.connection and self.connection.is_connected():
             self.connection.close()
-            logger.info("Connexion à la base de données fermée.")
+            logger.info("Connexion DB fermée")
 
-    def execute_query(self, query: str) -> pd.DataFrame:
-        """
-        Exécute une requête SQL et retourne les résultats sous forme de DataFrame.
-
-        Args:
-            query: Requête SQL à exécuter
-
-        Returns:
-            DataFrame contenant les résultats de la requête
-        """
+    def execute_query(self, query: str, params: Optional[Dict] = None) -> pd.DataFrame:
+        """Exécute une requête et retourne un DataFrame."""
         try:
+            if params:
+                return pd.read_sql(query, self.engine, params=params)
             return pd.read_sql(query, self.engine)
         except Exception as e:
-            logger.error(f"Erreur lors de l'exécution de la requête: {e}")
+            logger.error(f"Erreur requête SQL: {e}")
             raise
 
-    def insert_dataframe(self, df: pd.DataFrame, table_name: str, if_exists: str = 'append') -> None:
+    def get_table_info(self, table_name: str) -> Dict[str, Any]:
+        """Retourne les informations d'une table."""
+        query = f"""
+        SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT
+        FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_SCHEMA = '{self.config.db_name}' 
+        AND TABLE_NAME = '{table_name}'
         """
-        Insère un DataFrame dans une table de la base de données.
-
-        Args:
-            df: DataFrame à insérer
-            table_name: Nom de la table
-            if_exists: Comportement si la table existe déjà ('replace', 'append', 'fail')
-        """
-        try:
-            df.to_sql(name=table_name, con=self.engine, if_exists=if_exists, index=False)
-            logger.info(f"DataFrame inséré avec succès dans la table {table_name}.")
-        except Exception as e:
-            logger.error(f"Erreur lors de l'insertion du DataFrame: {e}")
-            raise
+        return self.execute_query(query)

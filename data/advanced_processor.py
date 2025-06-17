@@ -131,7 +131,6 @@ class AdvancedDataProcessor:
         if df is None or df.empty:
             raise ValueError(f"DataFrame {name} est vide ou None")
 
-        # Vérifications spécifiques par type
         required_columns = {
             'users': ['user_id'],
             'events': ['event_id', 'sport'],

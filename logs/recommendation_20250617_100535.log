@@ -1,0 +1,126 @@
+2025-06-17 10:05:39,334 - SportsRecommendation - INFO - Démarrage du pipeline d'entraînement complet
+2025-06-17 10:05:47,201 - SportsRecommendation - INFO -  MLflow configuré avec succès
+2025-06-17 10:05:47,201 - SportsRecommendation - INFO - Chargement des données...
+2025-06-17 10:05:56,336 - SportsRecommendation - INFO - Connexion à la base de données établie
+2025-06-17 10:05:56,336 - SportsRecommendation - INFO - Chargement complet des données...
+2025-06-17 10:05:56,336 - SportsRecommendation - INFO - Chargement des données utilisateurs...
+2025-06-17 10:06:05,473 - SportsRecommendation - INFO - Chargement des événements (120 derniers jours)...
+2025-06-17 10:06:06,336 - SportsRecommendation - ERROR - Erreur requête SQL: (pymysql.err.ProgrammingError) (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''days_back': '120'} DAY)\n                  AND event_status IN ('scheduled', 'li' at line 3")
+[SQL: 
+                SELECT event_id,                        sport_type as sport,                        competition_name as competition,                        home_team,                        away_team,                        CONCAT(home_team, ' vs ', away_team) as teams,                        event_start_time,                        event_status,                        venue,                        country,                        CASE                            WHEN event_start_time > NOW() THEN TIMESTAMPDIFF(HOUR, NOW(), event_start_time)                            ELSE 0                            END                              as hours_until_event
+                FROM events
+                WHERE event_start_time >= DATE_SUB(NOW(), INTERVAL %s DAY)
+                  AND event_status IN ('scheduled', 'live', 'finished')                 ]
+[parameters: {'days_back': 120}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-06-17 10:06:06,336 - SportsRecommendation - ERROR - Erreur lors du chargement des données: (pymysql.err.ProgrammingError) (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''days_back': '120'} DAY)\n                  AND event_status IN ('scheduled', 'li' at line 3")
+[SQL: 
+                SELECT event_id,                        sport_type as sport,                        competition_name as competition,                        home_team,                        away_team,                        CONCAT(home_team, ' vs ', away_team) as teams,                        event_start_time,                        event_status,                        venue,                        country,                        CASE                            WHEN event_start_time > NOW() THEN TIMESTAMPDIFF(HOUR, NOW(), event_start_time)                            ELSE 0                            END                              as hours_until_event
+                FROM events
+                WHERE event_start_time >= DATE_SUB(NOW(), INTERVAL %s DAY)
+                  AND event_status IN ('scheduled', 'live', 'finished')                 ]
+[parameters: {'days_back': 120}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-06-17 10:06:06,552 - SportsRecommendation - INFO - Connexion DB fermée
+2025-06-17 10:06:06,552 - SportsRecommendation - ERROR - ÉCHEC DU PIPELINE: (pymysql.err.ProgrammingError) (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''days_back': '120'} DAY)\n                  AND event_status IN ('scheduled', 'li' at line 3")
+[SQL: 
+                SELECT event_id,                        sport_type as sport,                        competition_name as competition,                        home_team,                        away_team,                        CONCAT(home_team, ' vs ', away_team) as teams,                        event_start_time,                        event_status,                        venue,                        country,                        CASE                            WHEN event_start_time > NOW() THEN TIMESTAMPDIFF(HOUR, NOW(), event_start_time)                            ELSE 0                            END                              as hours_until_event
+                FROM events
+                WHERE event_start_time >= DATE_SUB(NOW(), INTERVAL %s DAY)
+                  AND event_status IN ('scheduled', 'live', 'finished')                 ]
+[parameters: {'days_back': 120}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-06-17 10:06:06,574 - SportsRecommendation - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/cursors.py", line 322, in _query
+    conn.query(q)
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/connections.py", line 563, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/connections.py", line 825, in _read_query_result
+    result.read()
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/connections.py", line 1199, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/connections.py", line 775, in _read_packet
+    packet.raise_for_error()
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''days_back': '120'} DAY)\n                  AND event_status IN ('scheduled', 'li' at line 3")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 658, in run_full_pipeline
+    self.load_data()
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 122, in load_data
+    self.raw_data = self.data_loader.load_all_data(load_config)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/data/data_loader.py", line 164, in load_all_data
+    'events': self.load_events_data(
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/data/data_loader.py", line 64, in load_events_data
+    return self.db.execute_query(query, {'days_back': days_back})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/data/database_connector.py", line 63, in execute_query
+    return pd.read_sql(query, self.engine, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pandas/io/sql.py", line 734, in read_sql
+    return pandas_sql.read_query(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pandas/io/sql.py", line 1836, in read_query
+    result = self.execute(sql, params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pandas/io/sql.py", line 1659, in execute
+    return self.con.exec_driver_sql(sql, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1775, in exec_driver_sql
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/cursors.py", line 322, in _query
+    conn.query(q)
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/connections.py", line 563, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/connections.py", line 825, in _read_query_result
+    result.read()
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/connections.py", line 1199, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/connections.py", line 775, in _read_packet
+    packet.raise_for_error()
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/pymysql/err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''days_back': '120'} DAY)\n                  AND event_status IN ('scheduled', 'li' at line 3")
+[SQL: 
+                SELECT event_id,                        sport_type as sport,                        competition_name as competition,                        home_team,                        away_team,                        CONCAT(home_team, ' vs ', away_team) as teams,                        event_start_time,                        event_status,                        venue,                        country,                        CASE                            WHEN event_start_time > NOW() THEN TIMESTAMPDIFF(HOUR, NOW(), event_start_time)                            ELSE 0                            END                              as hours_until_event
+                FROM events
+                WHERE event_start_time >= DATE_SUB(NOW(), INTERVAL %s DAY)
+                  AND event_status IN ('scheduled', 'live', 'finished')                 ]
+[parameters: {'days_back': 120}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+

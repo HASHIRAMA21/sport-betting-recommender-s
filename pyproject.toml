@@ -10,7 +10,9 @@ dependencies = [
     "mlflow>=2.22.0",
     "mysql-connector-python>=9.3.0",
     "pymysql>=1.1.1",
+    "pytorch-lightning>=2.5.1.post0",
     "scikit-learn>=1.6.1",
     "scipy>=1.15.3",
     "sqlalchemy>=2.0.41",
+    "torch==2.2.2",
 ]

@@ -5,26 +5,18 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader, TensorDataset
-import pytorch_lightning as pl
-from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
-from pytorch_lightning.loggers import MLFlowLogger
 from catboost import CatBoostClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_auc_score
-
 import mlflow
 import mlflow.pytorch
 import mlflow.catboost
 from scipy.sparse import csr_matrix
-from typing import Dict, List, Tuple, Optional, Union, Any
+from typing import Dict, List, Tuple, Optional, Any
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-import logging
-import warnings
 import joblib
 import time
 from concurrent.futures import ThreadPoolExecutor
-
 from helper.logging import logger
 from models.model_config import AlgorithmConfig
 
@@ -230,7 +222,6 @@ class CollaborativeFilteringRecommender(BaseRecommender):
                 user_idx = self.user_mapping[uid]
                 item_idx = self.item_mapping[iid]
 
-                # Calcul de la prédiction
                 pred = (
                         self.global_bias +
                         self.user_biases[user_idx] +

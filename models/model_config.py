@@ -30,7 +30,7 @@ class AlgorithmConfig:
     hybrid_weights: Dict[str, float] = field(default_factory=lambda: {
         'collaborative': 0.4, 'content_based': 0.3, 'contextual': 0.3
     })
-    hybrid_ensemble_method: str = 'weighted_average'  # 'weighted_average', 'stacking', 'voting'
+    hybrid_ensemble_method: str = 'weighted_average'
 
     # Contextual Bandits
     bandit_alpha: float = 1.0
@@ -56,11 +56,30 @@ class AlgorithmConfig:
     catboost_l2_leaf_reg: float = 3.0
     catboost_early_stopping_rounds: int = 50
 
+    # Data Processing
+    tfidf_max_features: int = 300
+    rolling_windows: List[int] = field(default_factory=lambda: [7, 30, 90])
+    handle_outliers: bool = True
+    outlier_threshold: float = 1.5
+
     # MLflow
-    mlflow_tracking_uri: str = "http://localhost:5000"
+    mlflow_tracking_uri: str = "http://51.91.128.26:5000"
     mlflow_experiment_name: str = "sports_betting_recommendation"
 
     # Performance
     enable_gpu: bool = True
     enable_mixed_precision: bool = True
-    enable_parallel_training: bool = True
+    enable_parallel_training: bool = False
+
+    # Database
+    db_host: str = "146.59.148.113"
+    db_port: int = 51724
+    db_user: str = "sport_bet"
+    db_password: str = "Sport@Bet19"
+    db_name: str = "ai_engine_db"
+
+    # Paths
+    models_dir: str = "./models"
+    artifacts_dir: str = "./artifacts"
+    logs_dir: str = "./logs"
+

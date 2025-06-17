@@ -1,0 +1,15 @@
+artifact_uri: /Users/krohn/PycharmProjects/betting_recommender/tests/mlruns/817978148144270768/541929b4c6554899bcc8cca9eda1db7b/artifacts
+end_time: 1750087237293
+entry_point_name: ''
+experiment_id: '817978148144270768'
+lifecycle_stage: active
+run_id: 541929b4c6554899bcc8cca9eda1db7b
+run_name: catboost_training
+run_uuid: 541929b4c6554899bcc8cca9eda1db7b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1750087237111
+status: 3
+tags: []
+user_id: krohn
