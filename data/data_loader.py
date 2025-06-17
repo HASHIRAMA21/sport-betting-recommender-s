@@ -35,7 +35,7 @@ class SportsDataLoader:
         logger.info("Chargement des données utilisateurs...")
         return self.db.execute_query(query)
 
-    def load_events_data(self, days_back: int = 30, limit: Optional[int] = None) -> pd.DataFrame:
+    def load_events_data(self, days_back: int = 2, limit: Optional[int] = None) -> pd.DataFrame:
         """Charge les données des événements sportifs."""
         query = """
                 SELECT id AS event_id,
@@ -75,7 +75,7 @@ class SportsDataLoader:
                        market_type, \
                        status     as market_status, \
                        created_at as market_open_time
-                FROM markets
+                FROM t_etl_market_with_outcomes_summary
                 WHERE status IN ('open', 'suspended', 'closed') \
                 """
 
@@ -93,7 +93,7 @@ class SportsDataLoader:
                        outcome_name, \
                        current_odds, \
                        status as outcome_status
-                FROM outcomes
+                FROM t_etl_market_with_outcomes_summary
                 WHERE status IN ('active', 'suspended', 'settled') \
                 """
 
@@ -103,35 +103,33 @@ class SportsDataLoader:
         logger.info("Chargement des outcomes...")
         return self.db.execute_query(query)
 
-    def load_bets_data(self, days_back: int = 90, limit: Optional[int] = None) -> pd.DataFrame:
-        """Charge les données des paris."""
+    def load_bets_data(self, days_back: int = 3, limit: Optional[int] = None) -> pd.DataFrame:
+        """Charge les données des paris depuis t_etl_bet_summary."""
         query = """
-                SELECT bet_id, \
-                       user_id, \
-                       outcome_id, \
-                       bet_amount, \
-                       odds_used, \
-                       bet_timestamp, \
-                       settlement_timestamp, \
-                       status  as bet_status, \
-                       CASE \
-                           WHEN status = 'won' THEN 1 \
-                           WHEN status = 'lost' THEN 0 \
-                           ELSE NULL \
-                           END as outcome, \
-                       CASE \
-                           WHEN TIMESTAMPDIFF(MINUTE, bet_timestamp, \
-                                                      (SELECT event_start_time \
-                                                       FROM events e \
-                                                                JOIN markets m ON e.event_id = m.event_id \
-                                                                JOIN outcomes o ON m.market_id = o.market_id \
-                                                       WHERE o.outcome_id = bets.outcome_id) \
-                                ) <= 0 THEN 1 \
-                           ELSE 0 \
-                           END as is_live_bet
-                FROM bets
+                SELECT id         AS bet_id,
+                       user_id,
+                       outcome_id,
+                       bet_amount,
+                       odds       AS odds_used,
+                       bet_timestamp,
+                       settlement_timestamp,
+                       outcome AS bet_status,
+                       CASE
+                           WHEN bet_result = 'won' THEN 1
+                           WHEN bet_result = 'lost' THEN 0
+                           ELSE NULL
+                           END    AS outcome,
+                       CASE
+                           WHEN TIMESTAMPDIFF(MINUTE, bet_timestamp,
+                                                      (SELECT event_start_time
+                                                       FROM t_etl_event_summary e
+                                                       WHERE e.id = b.event_id)
+                                ) <= 0 THEN 1
+                           ELSE 0
+                           END    AS is_live_bet
+                FROM t_etl_bet_summary b
                 WHERE bet_timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
-                  AND status IN ('won', 'lost', 'pending') \
+                  AND bet_result IN ('won', 'lost', 'pending')
                 """
 
         if limit:
@@ -140,12 +138,13 @@ class SportsDataLoader:
         logger.info(f"Chargement des paris ({days_back} derniers jours)...")
         return self.db.execute_query(query, {'days_back': days_back})
 
+
     def load_odds_history(self, days_back: int = 30, limit: Optional[int] = None) -> pd.DataFrame:
         """Charge l'historique des cotes."""
         query = """
                 SELECT outcome_id, \
                        odds_value, timestamp, change_type
-                FROM odds_history
+                FROM t_etl_market_with_outcomes_summary
                 WHERE timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
                 ORDER BY outcome_id, timestamp \
                 """

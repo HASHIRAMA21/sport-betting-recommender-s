@@ -2334,255 +2334,273 @@ DYNAMIC</Options>
       <StoredType>varchar(50)|0s</StoredType>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <index id="498" parent="472" name="PRIMARY">
+    <column id="498" parent="472" name="settlement_timestamp">
+      <Position>11</Position>
+      <StoredType>datetime|0s</StoredType>
+    </column>
+    <column id="499" parent="472" name="outcome_id">
+      <Position>12</Position>
+      <StoredType>varchar(50)|0s</StoredType>
+    </column>
+    <column id="500" parent="472" name="status">
+      <DefaultExpression>&apos;pending&apos;</DefaultExpression>
+      <Position>13</Position>
+      <StoredType>varchar(20)|0s</StoredType>
+    </column>
+    <column id="501" parent="472" name="odds_used">
+      <DefaultExpression>1</DefaultExpression>
+      <Position>14</Position>
+      <StoredType>double|0s</StoredType>
+    </column>
+    <index id="502" parent="472" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="499" parent="472" name="PRIMARY">
+    <key id="503" parent="472" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="500" parent="473" name="id">
+    <column id="504" parent="473" name="id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="501" parent="473" name="event_name">
+    <column id="505" parent="473" name="event_name">
       <Position>2</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="502" parent="473" name="event_type_id">
+    <column id="506" parent="473" name="event_type_id">
       <Position>3</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="503" parent="473" name="event_type_name">
+    <column id="507" parent="473" name="event_type_name">
       <Position>4</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="504" parent="473" name="country_id">
+    <column id="508" parent="473" name="country_id">
       <Position>5</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="505" parent="473" name="country_name">
+    <column id="509" parent="473" name="country_name">
       <Position>6</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="506" parent="473" name="competition_id">
+    <column id="510" parent="473" name="competition_id">
       <Position>7</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="507" parent="473" name="competition_name">
+    <column id="511" parent="473" name="competition_name">
       <Position>8</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="508" parent="473" name="event_timestamp">
+    <column id="512" parent="473" name="event_timestamp">
       <Position>9</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="509" parent="473" name="home_team">
+    <column id="513" parent="473" name="home_team">
       <Position>10</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="510" parent="473" name="away_team">
+    <column id="514" parent="473" name="away_team">
       <Position>11</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="511" parent="473" name="event_start_time">
+    <column id="515" parent="473" name="event_start_time">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>12</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="512" parent="473" name="event_status">
+    <column id="516" parent="473" name="event_status">
       <DefaultExpression>&apos;scheduled&apos;</DefaultExpression>
       <Position>13</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="513" parent="473" name="venue">
+    <column id="517" parent="473" name="venue">
       <DefaultExpression>&apos;Unknown&apos;</DefaultExpression>
       <Position>14</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <index id="514" parent="473" name="PRIMARY">
+    <index id="518" parent="473" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="515" parent="473" name="PRIMARY">
+    <key id="519" parent="473" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="516" parent="474" name="id">
+    <column id="520" parent="474" name="id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="517" parent="474" name="event_id">
+    <column id="521" parent="474" name="event_id">
       <Position>2</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="518" parent="474" name="market_name">
+    <column id="522" parent="474" name="market_name">
       <Position>3</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="519" parent="474" name="market_id">
+    <column id="523" parent="474" name="market_id">
       <Position>4</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="520" parent="474" name="outcome_id">
+    <column id="524" parent="474" name="outcome_id">
       <Position>5</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="521" parent="474" name="outcome_name">
+    <column id="525" parent="474" name="outcome_name">
       <Position>6</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="522" parent="474" name="probability">
+    <column id="526" parent="474" name="probability">
       <Position>7</Position>
       <StoredType>decimal(5,4 digit)|0s</StoredType>
     </column>
-    <column id="523" parent="474" name="odds">
+    <column id="527" parent="474" name="odds">
       <Position>8</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <index id="524" parent="474" name="PRIMARY">
+    <index id="528" parent="474" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="525" parent="474" name="PRIMARY">
+    <key id="529" parent="474" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="526" parent="475" name="id">
+    <column id="530" parent="475" name="id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="527" parent="475" name="vip_status">
+    <column id="531" parent="475" name="vip_status">
       <DefaultExpression>0</DefaultExpression>
       <Position>2</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="528" parent="475" name="name">
+    <column id="532" parent="475" name="name">
       <Position>3</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="529" parent="475" name="email">
+    <column id="533" parent="475" name="email">
       <Position>4</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="530" parent="475" name="sex">
+    <column id="534" parent="475" name="sex">
       <Position>5</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="531" parent="475" name="phone">
+    <column id="535" parent="475" name="phone">
       <Position>6</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="532" parent="475" name="total_deposits">
+    <column id="536" parent="475" name="total_deposits">
       <Position>7</Position>
       <StoredType>decimal(15,2 digit)|0s</StoredType>
     </column>
-    <column id="533" parent="475" name="registration_date">
+    <column id="537" parent="475" name="registration_date">
       <Position>8</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="534" parent="475" name="country">
+    <column id="538" parent="475" name="country">
       <DefaultExpression>&apos;CM&apos;</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>9</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="535" parent="475" name="age">
+    <column id="539" parent="475" name="age">
       <DefaultExpression>18</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>10</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="536" parent="475" name="total_withdrawals">
+    <column id="540" parent="475" name="total_withdrawals">
       <DefaultExpression>0.00</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>11</Position>
       <StoredType>decimal(15,2 digit)|0s</StoredType>
     </column>
-    <column id="537" parent="475" name="last_login_date">
+    <column id="541" parent="475" name="last_login_date">
       <Position>12</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <index id="538" parent="475" name="PRIMARY">
+    <index id="542" parent="475" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="539" parent="475" name="PRIMARY">
+    <key id="543" parent="475" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="540" parent="476" name="user_id">
+    <column id="544" parent="476" name="user_id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="541" parent="476" name="email">
+    <column id="545" parent="476" name="email">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="542" parent="476" name="preferred_channel">
+    <column id="546" parent="476" name="preferred_channel">
       <DefaultExpression>&apos;email&apos;</DefaultExpression>
       <Position>3</Position>
       <StoredType>enum(&apos;email&apos;, &apos;sms&apos;, &apos;push&apos;)|0e</StoredType>
     </column>
-    <column id="543" parent="476" name="last_promotion_date">
+    <column id="547" parent="476" name="last_promotion_date">
       <Position>4</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="544" parent="476" name="total_deposits">
+    <column id="548" parent="476" name="total_deposits">
       <DefaultExpression>0.00</DefaultExpression>
       <Position>5</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <column id="545" parent="476" name="favorite_sports">
+    <column id="549" parent="476" name="favorite_sports">
       <Position>6</Position>
       <StoredType>text|0s</StoredType>
     </column>
-    <column id="546" parent="476" name="location">
+    <column id="550" parent="476" name="location">
       <Position>7</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="547" parent="476" name="is_active">
+    <column id="551" parent="476" name="is_active">
       <DefaultExpression>1</DefaultExpression>
       <Position>8</Position>
       <StoredType>tinyint(1)|0s</StoredType>
     </column>
-    <column id="548" parent="476" name="email_verified">
+    <column id="552" parent="476" name="email_verified">
       <DefaultExpression>0</DefaultExpression>
       <Position>9</Position>
       <StoredType>tinyint(1)|0s</StoredType>
     </column>
-    <column id="549" parent="476" name="created_at">
+    <column id="553" parent="476" name="created_at">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>10</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="550" parent="476" name="updated_at">
+    <column id="554" parent="476" name="updated_at">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
       <Position>11</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <index id="551" parent="476" name="PRIMARY">
+    <index id="555" parent="476" name="PRIMARY">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="552" parent="476" name="PRIMARY">
+    <key id="556" parent="476" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

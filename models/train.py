@@ -109,13 +109,13 @@ class TrainingPipeline:
 
             load_config = {
                 'users_limit': None,  
-                'events_days_back': 120,  # 4 mois d'événements
+                'events_days_back': 5, #120,  # 4 mois d'événements
                 'events_limit': None,
                 'markets_limit': None,
                 'outcomes_limit': None,
-                'bets_days_back': 180,
+                'bets_days_back': 5, #180,
                 'bets_limit': None,
-                'odds_days_back': 60,  # 2 mois d'historique de cotes
+                'odds_days_back': 5,#60,  # 2 mois d'historique de cotes
                 'odds_limit': None
             }
 
