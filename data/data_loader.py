@@ -35,38 +35,44 @@ class SportsDataLoader:
         logger.info("Chargement des données utilisateurs...")
         return self.db.execute_query(query)
 
-    def load_bets_data(self, days_back: int = 3, limit: Optional[int] = None) -> pd.DataFrame:
-        """Charge les données des paris depuis t_etl_bet_summary."""
-        query = f"""
-                SELECT id         AS bet_id,
-                       user_id,
-                       outcome_id,
-                       bet_amount,
-                       odds       AS odds_used,
-                       bet_timestamp,
-                       settlement_timestamp,
-                       outcome AS bet_status,
-                       CASE
-                           WHEN bet_result = 'won' THEN 1
-                           WHEN bet_result = 'lost' THEN 0
-                           ELSE NULL
-                       END AS outcome,
-                       CASE
-                           WHEN TIMESTAMPDIFF(MINUTE, bet_timestamp,
-                                (SELECT event_start_time
-                                 FROM t_etl_event_summary e
-                                 WHERE e.id = b.event_id)) <= 0 THEN 1
-                           ELSE 0
-                       END AS is_live_bet
+    def load_bets_data(self, days_back: int = 90, limit: Optional[int] = None) -> pd.DataFrame:
+        query = """
+                SELECT id      AS bet_id, \
+                       user_id, \
+                       outcome_id, \
+                       bet_amount, \
+                       odds    AS odds_used, \
+                       bet_timestamp, \
+                       settlement_timestamp, \
+                       outcome AS bet_status, \
+                       CASE \
+                           WHEN bet_result = 'won' THEN 1 \
+                           WHEN bet_result = 'lost' THEN 0 \
+                           ELSE NULL \
+                           END AS outcome, \
+                       CASE \
+                           WHEN TIMESTAMPDIFF(MINUTE, bet_timestamp, \
+                                                      (SELECT event_start_time \
+                                                       FROM t_etl_event_summary e \
+                                                       WHERE e.id = b.event_id) \
+                                ) <= 0 THEN 1 \
+                           ELSE 0 \
+                           END AS is_live_bet
                 FROM t_etl_bet_summary b
-                WHERE bet_timestamp >= DATE_SUB(NOW(), INTERVAL {days_back} DAY)
-                  AND bet_result IN ('won', 'lost', 'pending')
+                WHERE bet_timestamp >= DATE_SUB(NOW(), INTERVAL %(days_back)s DAY)
+                  AND bet_result IN ('won', 'lost', 'pending') \
                 """
 
-        if limit:
-            query += f" LIMIT {limit}"
+        params = {
+            'days_back': days_back
+        }
 
-        return self.db.execute_query(query)
+        if limit:
+            query += f" LIMIT {int(limit)}"
+
+        logger.info(f"Chargement des données de paris pour les {days_back} derniers jours.")
+
+        return self.db.execute_query(query, params=params)
 
     def load_events_data(self, days_back: int = 2, limit: Optional[int] = None) -> pd.DataFrame:
         """Charge les données des événements sportifs."""
