@@ -142,27 +142,28 @@ class SportsDataLoader:
         logger.info("Chargement des outcomes...")
         return self.db.execute_query(query)
 
-
-
     def load_odds_history(self, days_back: int = 30, limit: Optional[int] = None) -> pd.DataFrame:
         """Charge l'historique des cotes."""
         query = """
                 SELECT outcome_id, \
-                       odds_value, timestamp, change_type
+                       odds AS odds_value,
+                --- timestamp, change_type
                 FROM t_etl_market_with_outcomes_summary
-                WHERE timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
-                ORDER BY outcome_id, timestamp \
+                --  WHERE timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
+                ORDER BY outcome_id --, timestamp  \
                 """
 
+        # """
         if limit:
-            query += " LIMIT %s"
-            params = (days_back, limit)
+            query += f" LIMIT {limit}"
+            # params = (days_back, limit)
         else:
+            # params = (days_back,)
+            pass
+        # """
 
-            params = (days_back,)
-
-        logger.info(f"Chargement historique cotes ({days_back} jours)...")
-        return self.db.execute_query(query, params=params)
+        logger.info(f"Chargement historique cotes {days_back} jours)...")
+        return self.db.execute_query(query)
 
     def load_all_data(self, config: Optional[Dict] = None) -> Dict[str, pd.DataFrame]:
         """Charge toutes les données nécessaires."""
