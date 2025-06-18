@@ -59,16 +59,16 @@ class SportsDataLoader:
                            ELSE 0 \
                            END AS is_live_bet
                 FROM t_etl_bet_summary b
-                WHERE bet_timestamp >= DATE_SUB(NOW(), INTERVAL %(days_back)s DAY)
+                WHERE bet_timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
                   AND bet_result IN ('won', 'lost', 'pending') \
                 """
 
-        params = {
-            'days_back': days_back
-        }
-
         if limit:
-            query += f" LIMIT {int(limit)}"
+            query += " LIMIT %s"
+            params = (days_back, limit)
+        else:
+
+            params = (days_back,)
 
         logger.info(f"Chargement des données de paris pour les {days_back} derniers jours.")
 
