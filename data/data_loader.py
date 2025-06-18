@@ -72,11 +72,11 @@ class SportsDataLoader:
                 SELECT market_id, \
                        event_id, \
                        market_name, \
-                       market_type, \
+                       /*market_type, \
                        status     as market_status, \
-                       created_at as market_open_time
+                       created_at as market_open_time */
                 FROM t_etl_market_with_outcomes_summary
-                WHERE status IN ('open', 'suspended', 'closed') \
+               /* WHERE status IN ('open', 'suspended', 'closed') \ */
                 """
 
         if limit:
@@ -91,10 +91,10 @@ class SportsDataLoader:
                 SELECT outcome_id, \
                        market_id, \
                        outcome_name, \
-                       current_odds, \
-                       status as outcome_status
+                       /* current_odds, \
+                      status as outcome_status*/
                 FROM t_etl_market_with_outcomes_summary
-                WHERE status IN ('active', 'suspended', 'settled') \
+               /* WHERE status IN ('active', 'suspended', 'settled') \*/
                 """
 
         if limit:
