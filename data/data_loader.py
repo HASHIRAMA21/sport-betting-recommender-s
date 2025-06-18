@@ -155,10 +155,14 @@ class SportsDataLoader:
                 """
 
         if limit:
-            query += f" LIMIT {limit}"
+            query += " LIMIT %s"
+            params = (days_back, limit)
+        else:
+
+            params = (days_back,)
 
         logger.info(f"Chargement historique cotes ({days_back} jours)...")
-        return self.db.execute_query(query, {'days_back': days_back})
+        return self.db.execute_query(query, params=params)
 
     def load_all_data(self, config: Optional[Dict] = None) -> Dict[str, pd.DataFrame]:
         """Charge toutes les données nécessaires."""
