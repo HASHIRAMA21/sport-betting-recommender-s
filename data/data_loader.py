@@ -69,14 +69,14 @@ class SportsDataLoader:
     def load_markets_data(self, limit: Optional[int] = None) -> pd.DataFrame:
         """Charge les données des marchés de paris."""
         query = """
-                SELECT market_id, \
-                       event_id, \
-                       market_name, \
-                       /*market_type, \
-                       status     as market_status, \
-                       created_at as market_open_time */
+                SELECT market_id,
+                       event_id,
+                       market_name
+                -- , market_type
+                -- , status AS market_status
+                -- , created_at AS market_open_time
                 FROM t_etl_market_with_outcomes_summary
-               /* WHERE status IN ('open', 'suspended', 'closed') \ */
+                -- WHERE status IN ('open', 'suspended', 'closed') \
                 """
 
         if limit:
@@ -88,13 +88,13 @@ class SportsDataLoader:
     def load_outcomes_data(self, limit: Optional[int] = None) -> pd.DataFrame:
         """Charge les données des outcomes."""
         query = """
-                SELECT outcome_id, \
-                       market_id, \
-                       outcome_name, \
-                       /* current_odds, \
-                      status as outcome_status*/
+                SELECT outcome_id,
+                       market_id,
+                       outcome_name
+                -- , current_odds
+                -- , status AS outcome_status
                 FROM t_etl_market_with_outcomes_summary
-               /* WHERE status IN ('active', 'suspended', 'settled') \*/
+                -- WHERE status IN ('active', 'suspended', 'settled') \
                 """
 
         if limit:
