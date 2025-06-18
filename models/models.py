@@ -621,7 +621,7 @@ class HybridRecommender(BaseRecommender):
     def _stacking_ensemble(self, predictions: Dict[str, np.ndarray], user_ids: np.ndarray,
                            item_ids: np.ndarray) -> np.ndarray:
         """Combine les prédictions avec un meta-learner."""
-        # Implémentation simplifiée avec moyenne pondérée
+
         return self._weighted_average_ensemble(predictions)
 
     def recommend(self, user_id: int, n_recommendations: int = 10, context: Optional[Dict] = None) -> List[

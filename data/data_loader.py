@@ -35,6 +35,40 @@ class SportsDataLoader:
         logger.info("Chargement des données utilisateurs...")
         return self.db.execute_query(query)
 
+
+
+    def load_events_data(self, days_back: int = 2, limit: Optional[int] = None) -> pd.DataFrame:
+        """Charge les données des événements sportifs."""
+        query = """
+                SELECT id AS event_id,
+                       event_type_name                           AS sport,
+                       competition_name                     AS competition,
+                       home_team,
+                       away_team,
+                       CONCAT(home_team, ' vs ', away_team) AS teams,
+                       event_start_time,
+                       event_status,
+                       venue,
+                       country_name AS country,
+                       CASE
+                           WHEN event_start_time > NOW() THEN TIMESTAMPDIFF(HOUR, NOW(), event_start_time)
+                           ELSE 0
+                           END                              AS hours_until_event
+                FROM t_etl_event_summary
+                WHERE event_start_time >= DATE_SUB(NOW(), INTERVAL %s DAY)
+                  AND event_status IN ('scheduled', 'live', 'finished') \
+                """
+
+        if limit:
+            query += " LIMIT %s"
+            params = (days_back, limit)
+        else:
+            params = (days_back,)
+
+        logger.info(f"Chargement des événements ({days_back} derniers jours)...")
+        return self.db.execute_query(query, params)
+
+
     def load_bets_data(self, days_back: int = 90, limit: Optional[int] = None) -> pd.DataFrame:
         query = """
                 SELECT id      AS bet_id, \
@@ -73,37 +107,6 @@ class SportsDataLoader:
         logger.info(f"Chargement des données de paris pour les {days_back} derniers jours.")
 
         return self.db.execute_query(query, params=params)
-
-    def load_events_data(self, days_back: int = 2, limit: Optional[int] = None) -> pd.DataFrame:
-        """Charge les données des événements sportifs."""
-        query = """
-                SELECT id AS event_id,
-                       event_type_name                           AS sport,
-                       competition_name                     AS competition,
-                       home_team,
-                       away_team,
-                       CONCAT(home_team, ' vs ', away_team) AS teams,
-                       event_start_time,
-                       event_status,
-                       venue,
-                       country_name AS country,
-                       CASE
-                           WHEN event_start_time > NOW() THEN TIMESTAMPDIFF(HOUR, NOW(), event_start_time)
-                           ELSE 0
-                           END                              AS hours_until_event
-                FROM t_etl_event_summary
-                WHERE event_start_time >= DATE_SUB(NOW(), INTERVAL %s DAY)
-                  AND event_status IN ('scheduled', 'live', 'finished') \
-                """
-
-        if limit:
-            query += " LIMIT %s"
-            params = (days_back, limit)
-        else:
-            params = (days_back,)
-
-        logger.info(f"Chargement des événements ({days_back} derniers jours)...")
-        return self.db.execute_query(query, params)
 
     def load_markets_data(self, limit: Optional[int] = None) -> pd.DataFrame:
         """Charge les données des marchés de paris."""
