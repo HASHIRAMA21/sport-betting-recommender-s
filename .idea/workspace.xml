@@ -198,7 +198,7 @@
       <workItem from="1750061958955" duration="19450000" />
       <workItem from="1750100637672" duration="17229000" />
       <workItem from="1750175442210" duration="3025000" />
-      <workItem from="1750233567204" duration="3952000" />
+      <workItem from="1750233567204" duration="5080000" />
     </task>
     <servers />
   </component>
@@ -219,6 +219,6 @@
     <SUITE FILE_PATH="coverage/betting_recommender$advanced_processor.coverage" NAME="advanced_processor Coverage Results" MODIFIED="1750160630735" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data" />
     <SUITE FILE_PATH="coverage/betting_recommender$a.coverage" NAME="a Coverage Results" MODIFIED="1750087188568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/betting_recommender$train.coverage" NAME="train Coverage Results" MODIFIED="1750092290858" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/models" />
-    <SUITE FILE_PATH="coverage/betting_recommender$main.coverage" NAME="main Coverage Results" MODIFIED="1750236858306" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/betting_recommender$main.coverage" NAME="main Coverage Results" MODIFIED="1750239096955" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
