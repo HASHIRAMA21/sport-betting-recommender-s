@@ -113,7 +113,7 @@ class TrainingPipeline:
                 'events_limit': None,
                 'markets_limit': None,
                 'outcomes_limit': None,
-                'bets_days_back': 240, #180,
+                'bets_days_back': 360, #180,
                 'bets_limit': None,
                 'odds_days_back': 180,#60,  # 2 mois d'historique de cotes
                 'odds_limit': None
