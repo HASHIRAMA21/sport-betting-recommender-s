@@ -5,38 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37248df5-0674-41e7-bb05-3c8f8e9c276a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/8e56247a-dac1-4be5-b982-216b75956b3d.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/8e56247a-dac1-4be5-b982-216b75956b3d.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/data_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250616_175302.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_090223.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_094915.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_095344.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_095746.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_100149.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_100315.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_100535.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_100927.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_101021.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_101148.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_101232.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_102355.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250617_102709.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250616_175307.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_090229.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_094921.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_095350.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_095749.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_100153.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_100320.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_100539.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_100933.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_101026.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_101154.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_101237.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_102400.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250617_102714.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/advanced_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/advanced_processor.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +69,7 @@
       <recent name="$PROJECT_DIR$/tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.advanced_processor">
+  <component name="RunManager" selected="Python.main">
     <configuration name="a" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="betting_recommender" />
       <option name="ENV_FILES" value="" />
@@ -193,8 +164,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.advanced_processor" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.advanced_processor" />
         <item itemvalue="Python.train" />
         <item itemvalue="Python.a" />
       </list>
@@ -226,7 +197,9 @@
       <workItem from="1748851186301" duration="1003000" />
       <workItem from="1748957522103" duration="10662000" />
       <workItem from="1750061958955" duration="19450000" />
-      <workItem from="1750100637672" duration="12562000" />
+      <workItem from="1750100637672" duration="17229000" />
+      <workItem from="1750175442210" duration="3025000" />
+      <workItem from="1750233567204" duration="201000" />
     </task>
     <servers />
   </component>
@@ -244,9 +217,9 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/betting_recommender$advanced_processor.coverage" NAME="advanced_processor Coverage Results" MODIFIED="1750160543738" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data" />
+    <SUITE FILE_PATH="coverage/betting_recommender$advanced_processor.coverage" NAME="advanced_processor Coverage Results" MODIFIED="1750160630735" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data" />
     <SUITE FILE_PATH="coverage/betting_recommender$a.coverage" NAME="a Coverage Results" MODIFIED="1750087188568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/betting_recommender$train.coverage" NAME="train Coverage Results" MODIFIED="1750092290858" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/models" />
-    <SUITE FILE_PATH="coverage/betting_recommender$main.coverage" NAME="main Coverage Results" MODIFIED="1750152929814" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/betting_recommender$main.coverage" NAME="main Coverage Results" MODIFIED="1750175996912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

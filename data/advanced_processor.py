@@ -756,7 +756,7 @@ class AdvancedDataProcessor:
         df = df.copy()
 
         for col in df.columns:
-            missing_count = int(df[col].isnull().values.sum())  #df[col].isnull().sum().item()  # or int(df[col].isnull().sum())
+            missing_count = int(df[col].isnull().values.sum())
 
             if missing_count > 0:
                 missing_pct = missing_count / len(df) * 100
