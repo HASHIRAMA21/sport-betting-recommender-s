@@ -145,12 +145,10 @@ class SportsDataLoader:
     def load_odds_history(self, days_back: int = 30, limit: Optional[int] = None) -> pd.DataFrame:
         """Charge l'historique des cotes."""
         query = """
-                SELECT outcome_id, \
+                SELECT outcome_id, 
                        odds AS odds_value,
-                --- timestamp, change_type
                 FROM t_etl_market_with_outcomes_summary
-                --  WHERE timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
-                ORDER BY outcome_id --, timestamp  \
+                ORDER BY outcome_id
                 """
 
         # """
