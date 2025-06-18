@@ -106,11 +106,11 @@ class SportsDataLoader:
     def load_bets_data(self, days_back: int = 3, limit: Optional[int] = None) -> pd.DataFrame:
         """Charge les données des paris depuis t_etl_bet_summary."""
         query = """
-                SELECT id         AS bet_id,
+                SELECT id      AS bet_id,
                        user_id,
                        outcome_id,
                        bet_amount,
-                       odds       AS odds_used,
+                       odds    AS odds_used,
                        bet_timestamp,
                        settlement_timestamp,
                        outcome AS bet_status,
@@ -118,7 +118,7 @@ class SportsDataLoader:
                            WHEN bet_result = 'won' THEN 1
                            WHEN bet_result = 'lost' THEN 0
                            ELSE NULL
-                           END    AS outcome,
+                           END AS outcome,
                        CASE
                            WHEN TIMESTAMPDIFF(MINUTE, bet_timestamp,
                                                       (SELECT event_start_time
@@ -126,10 +126,10 @@ class SportsDataLoader:
                                                        WHERE e.id = b.event_id)
                                 ) <= 0 THEN 1
                            ELSE 0
-                           END    AS is_live_bet
+                           END AS is_live_bet
                 FROM t_etl_bet_summary b
                 WHERE bet_timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
-                  AND bet_result IN ('won', 'lost', 'pending')
+                  AND bet_result IN ('won', 'lost', 'pending') \
                 """
 
         if limit:
