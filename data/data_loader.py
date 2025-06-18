@@ -146,7 +146,7 @@ class SportsDataLoader:
         """Charge l'historique des cotes."""
         query = """
                 SELECT outcome_id, 
-                       odds AS odds_value,
+                       odds AS odds_value
                 FROM t_etl_market_with_outcomes_summary
                 ORDER BY outcome_id
                 """
