@@ -9,14 +9,6 @@
   <component name="ChangeListManager">
     <list default="true" id="37248df5-0674-41e7-bb05-3c8f8e9c276a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/advanced_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/advanced_processor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/database_connector.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/database_connector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/a.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/a.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data_processor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/evaluation.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/evaluation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/model_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/model_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,7 +205,7 @@
       <workItem from="1750691239805" duration="542000" />
       <workItem from="1750692449986" duration="7650000" />
       <workItem from="1750752702186" duration="816000" />
-      <workItem from="1750753606075" duration="16267000" />
+      <workItem from="1750753606075" duration="17736000" />
     </task>
     <servers />
   </component>
