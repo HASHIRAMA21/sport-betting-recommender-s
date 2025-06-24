@@ -434,9 +434,21 @@ class ContentBasedRecommender(BaseRecommender):
                     item_idx = int(item_idx)
                     rating = float(rating)
                     if item_idx < len(item_features):
-                        weighted_features += rating * item_features[item_idx]
+                        # Handle different types of item_features
+                        if isinstance(item_features, pd.DataFrame):
+                            item_feature = item_features.iloc[item_idx].values
+                        elif isinstance(item_features, csr_matrix):
+                            item_feature = item_features[item_idx].toarray()[0]
+                        elif isinstance(item_features, np.ndarray):
+                            item_feature = item_features[item_idx]
+                        else:
+                            # Skip unknown types
+                            continue
+
+                        weighted_features += rating * item_feature
                         total_weight += rating
-                except (ValueError, TypeError):
+                except (ValueError, TypeError, IndexError) as e:
+                    logger.debug(f"Error in _build_user_profiles for item {item_idx}: {e}")
                     continue
 
             if total_weight > 0:
@@ -463,12 +475,23 @@ class ContentBasedRecommender(BaseRecommender):
                 if user_id in user_profiles and item_id < len(item_features):
                     # Concaténation du profil utilisateur et des features de l'item
                     user_profile = user_profiles[user_id]
-                    item_feature = item_features[item_id]
+
+                    # Handle different types of item_features
+                    if isinstance(item_features, pd.DataFrame):
+                        item_feature = item_features.iloc[item_id].values
+                    elif isinstance(item_features, csr_matrix):
+                        item_feature = item_features[item_id].toarray()[0]
+                    elif isinstance(item_features, np.ndarray):
+                        item_feature = item_features[item_id]
+                    else:
+                        # Skip unknown types
+                        continue
 
                     combined_features = np.concatenate([user_profile, item_feature])
                     X.append(combined_features)
                     y.append(rating)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, IndexError) as e:
+                logger.debug(f"Error in _prepare_training_data for item {item_id}: {e}")
                 continue
 
         return np.array(X), np.array(y)

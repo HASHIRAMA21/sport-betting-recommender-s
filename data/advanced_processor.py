@@ -1095,27 +1095,22 @@ class AdvancedDataProcessor:
                 logger.error(f"Impossible de convertir en DataFrame: {e}")
                 return df
 
-        # Vérification que df n'est pas vide
         if df.empty:
             return df
 
         df_copy = df.copy()
 
         try:
-            # Séparation par type de données
             numeric_cols = df_copy.select_dtypes(include=[np.number]).columns.tolist()
             categorical_cols = df_copy.select_dtypes(include=['object', 'category']).columns.tolist()
             bool_cols = df_copy.select_dtypes(include=['bool']).columns.tolist()
             datetime_cols = df_copy.select_dtypes(include=['datetime64']).columns.tolist()
 
             if strategy == 'smart':
-                # Colonnes numériques : médiane
                 for col in numeric_cols:
-                    # Vérification sécurisée pour éviter les comparaisons ambiguës
                     has_na = df_copy[col].isna().any()
                     if isinstance(has_na, bool) and has_na:
                         median_val = df_copy[col].median()
-                        # Vérification que median_val est un scalaire
                         if hasattr(median_val, 'item'):
                             try:
                                 median_val = median_val.item()
@@ -1123,7 +1118,6 @@ class AdvancedDataProcessor:
                                 pass
                         df_copy[col] = df_copy[col].fillna(median_val if pd.notna(median_val) else 0)
 
-                # Colonnes catégorielles : mode ou 'Unknown'
                 for col in categorical_cols:
                     has_na = df_copy[col].isna().any()
                     if isinstance(has_na, bool) and has_na:
@@ -1134,7 +1128,6 @@ class AdvancedDataProcessor:
                             fill_val = 'Unknown'
                         df_copy[col] = df_copy[col].fillna(fill_val)
 
-                # Colonnes booléennes : mode ou False
                 for col in bool_cols:
                     has_na = df_copy[col].isna().any()
                     if isinstance(has_na, bool) and has_na:

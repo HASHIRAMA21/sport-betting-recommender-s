@@ -1,0 +1,98 @@
+2025-06-24 11:54:29,288 - SportsRecommendation - INFO - Démarrage du pipeline d'entraînement complet
+2025-06-24 11:54:30,235 - SportsRecommendation - INFO -  MLflow configuré avec succès
+2025-06-24 11:54:30,236 - SportsRecommendation - INFO - Chargement des données...
+2025-06-24 11:54:37,120 - SportsRecommendation - INFO - Connexion à la base de données établie
+2025-06-24 11:54:37,121 - SportsRecommendation - INFO - === CHARGEMENT COMPLET DES DONNÉES ===
+2025-06-24 11:54:37,121 - SportsRecommendation - INFO - === DIAGNOSTIC DES DONNÉES DE PARIS ===
+2025-06-24 11:55:04,206 - SportsRecommendation - INFO - === RÉSULTATS DU DIAGNOSTIC ===
+2025-06-24 11:55:04,212 - SportsRecommendation - INFO - bets: {'total_rows': 154971, 'valid_bet_amounts': 154971, 'valid_user_ids': 154971, 'valid_event_ids': 154971, 'valid_outcome_ids': 0, 'oldest_bet': Timestamp('2023-02-06 17:17:17'), 'newest_bet': Timestamp('2025-04-11 17:55:19'), 'unique_users': 2283, 'unique_events': 1994}
+2025-06-24 11:55:04,212 - SportsRecommendation - INFO - recent_activity: [{'bet_date': datetime.date(2025, 4, 11), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 24), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 21), 'daily_bets': 13}, {'bet_date': datetime.date(2025, 3, 20), 'daily_bets': 4}, {'bet_date': datetime.date(2025, 3, 18), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 13), 'daily_bets': 3}, {'bet_date': datetime.date(2025, 3, 11), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 10), 'daily_bets': 3}, {'bet_date': datetime.date(2025, 3, 5), 'daily_bets': 2}, {'bet_date': datetime.date(2025, 3, 4), 'daily_bets': 9}]
+2025-06-24 11:55:04,212 - SportsRecommendation - INFO - users: 3413
+2025-06-24 11:55:04,213 - SportsRecommendation - INFO - events: 1368324
+2025-06-24 11:55:04,213 - SportsRecommendation - INFO - markets: 29626
+2025-06-24 11:55:04,213 - SportsRecommendation - INFO - joins: {'total_bets': 154971}
+2025-06-24 11:55:04,213 - SportsRecommendation - INFO - Chargement des données utilisateurs...
+2025-06-24 11:55:10,996 - SportsRecommendation - INFO - Utilisateurs chargés: 3413 enregistrements
+2025-06-24 11:55:10,996 - SportsRecommendation - INFO - Chargement des événements (120 derniers jours)...
+2025-06-24 11:55:25,028 - SportsRecommendation - INFO - Événements chargés: 50000 enregistrements
+2025-06-24 11:55:28,380 - SportsRecommendation - INFO - Marchés chargés: 29626 enregistrements
+2025-06-24 11:55:41,075 - SportsRecommendation - INFO - Outcomes chargés: 29626 enregistrements
+2025-06-24 11:56:16,052 - SportsRecommendation - INFO - Paris chargés: 41406 lignes
+2025-06-24 11:56:20,071 - SportsRecommendation - INFO - Historique cotes chargé: 29626 enregistrements
+2025-06-24 11:56:20,071 - SportsRecommendation - INFO - === RÉSUMÉ DU CHARGEMENT ===
+2025-06-24 11:56:20,071 - SportsRecommendation - INFO - users: 3413 enregistrements
+2025-06-24 11:56:20,071 - SportsRecommendation - INFO - events: 50000 enregistrements
+2025-06-24 11:56:20,071 - SportsRecommendation - INFO - markets: 29626 enregistrements
+2025-06-24 11:56:20,072 - SportsRecommendation - INFO - outcomes: 29626 enregistrements
+2025-06-24 11:56:20,072 - SportsRecommendation - INFO - bets: 41406 enregistrements
+2025-06-24 11:56:20,072 - SportsRecommendation - INFO - odds_history: 29626 enregistrements
+2025-06-24 11:56:20,077 - SportsRecommendation - INFO -  Données chargées avec succès
+2025-06-24 11:56:20,077 - SportsRecommendation - INFO - Résumé des données:
+2025-06-24 11:56:20,077 - SportsRecommendation - INFO -   - users: 3,413 enregistrements
+2025-06-24 11:56:20,077 - SportsRecommendation - INFO -   - events: 50,000 enregistrements
+2025-06-24 11:56:20,077 - SportsRecommendation - INFO -   - markets: 29,626 enregistrements
+2025-06-24 11:56:20,077 - SportsRecommendation - INFO -   - outcomes: 29,626 enregistrements
+2025-06-24 11:56:20,077 - SportsRecommendation - INFO -   - bets: 41,406 enregistrements
+2025-06-24 11:56:20,078 - SportsRecommendation - INFO -   - odds_history: 29,626 enregistrements
+2025-06-24 11:56:20,214 - SportsRecommendation - INFO - Connexion DB fermée
+2025-06-24 11:56:20,215 - SportsRecommendation - INFO - Préprocessing des données...
+2025-06-24 11:57:32,245 - SportsRecommendation - INFO -  Préprocessing terminé avec succès
+2025-06-24 11:57:32,246 - SportsRecommendation - INFO - Résumé du préprocessing:
+2025-06-24 11:57:32,246 - SportsRecommendation - INFO -   - Matrice user-item: (12, 46)
+2025-06-24 11:57:32,246 - SportsRecommendation - INFO -   - Features événements: (50000, 305)
+2025-06-24 11:57:32,246 - SportsRecommendation - INFO -   - Features comportementales: 0
+2025-06-24 11:57:32,247 - SportsRecommendation - INFO -   - Encodeurs créés: 10
+2025-06-24 11:57:32,247 - SportsRecommendation - INFO - Division des données...
+2025-06-24 11:57:32,251 - SportsRecommendation - WARNING - Colonnes dupliquées détectées dans les features: ['hours_until_event', 'days_since_registration', 'bet_timing_hours_before']
+2025-06-24 11:57:32,251 - SportsRecommendation - INFO - Colonne renommée: hours_until_event -> hours_until_event_1
+2025-06-24 11:57:32,251 - SportsRecommendation - INFO - Colonne renommée: days_since_registration -> days_since_registration_1
+2025-06-24 11:57:32,251 - SportsRecommendation - INFO - Colonne renommée: bet_timing_hours_before -> bet_timing_hours_before_1
+2025-06-24 11:57:32,252 - SportsRecommendation - WARNING - Colonnes dupliquées détectées dans les features: ['hours_until_event', 'days_since_registration', 'bet_timing_hours_before']
+2025-06-24 11:57:32,253 - SportsRecommendation - INFO - Colonne renommée: hours_until_event -> hours_until_event_1
+2025-06-24 11:57:32,253 - SportsRecommendation - INFO - Colonne renommée: days_since_registration -> days_since_registration_1
+2025-06-24 11:57:32,253 - SportsRecommendation - INFO - Colonne renommée: bet_timing_hours_before -> bet_timing_hours_before_1
+2025-06-24 11:57:32,254 - SportsRecommendation - WARNING - Colonnes dupliquées détectées dans les features: ['hours_until_event', 'days_since_registration', 'bet_timing_hours_before']
+2025-06-24 11:57:32,254 - SportsRecommendation - INFO - Colonne renommée: hours_until_event -> hours_until_event_1
+2025-06-24 11:57:32,254 - SportsRecommendation - INFO - Colonne renommée: days_since_registration -> days_since_registration_1
+2025-06-24 11:57:32,254 - SportsRecommendation - INFO - Colonne renommée: bet_timing_hours_before -> bet_timing_hours_before_1
+2025-06-24 11:57:32,255 - SportsRecommendation - INFO -  Division des données terminée
+2025-06-24 11:57:32,255 - SportsRecommendation - INFO -   - Train: 114 exemples
+2025-06-24 11:57:32,255 - SportsRecommendation - INFO -   - Validation: 39 exemples
+2025-06-24 11:57:32,255 - SportsRecommendation - INFO -   - Test: 39 exemples
+2025-06-24 11:57:32,255 - SportsRecommendation - INFO - Début de l'entraînement des modèles...
+2025-06-24 11:57:32,678 - SportsRecommendation - WARNING - La variable cible ne contient qu'une seule valeur unique: [0]. CatBoost nécessite au moins deux valeurs uniques.
+2025-06-24 11:57:32,678 - SportsRecommendation - INFO - Données synthétiques créées avec 2 valeurs uniques
+2025-06-24 11:57:32,678 - SportsRecommendation - INFO - Entraînement de collaborative_filtering...
+2025-06-24 11:57:33,783 - SportsRecommendation - ERROR - Erreur lors de l'entraînement de collaborative_filtering: '<' not supported between instances of 'str' and 'float'
+2025-06-24 11:57:33,783 - SportsRecommendation - INFO - Entraînement de content_based...
+2025-06-24 11:57:35,069 - SportsRecommendation - ERROR - Erreur lors de l'entraînement de content_based: tuple index out of range
+2025-06-24 11:57:35,075 - SportsRecommendation - INFO - Entraînement de contextual_catboost...
+2025-06-24 11:57:36,243 - SportsRecommendation - INFO - Contextual CatBoost entraîné en 0.84s
+2025-06-24 11:57:36,246 - SportsRecommendation - WARNING - Erreur calcul métriques de recommandation pour contextual_catboost: '<' not supported between instances of 'str' and 'float'
+2025-06-24 11:57:37,176 - SportsRecommendation - INFO - ContextualCatBoost sauvegardé dans ./outputs/models/contextual_catboost/contextual_catboost_model.joblib
+2025-06-24 11:57:40,306 - SportsRecommendation - ERROR - Erreur lors de l'entraînement de contextual_catboost: Unable to locate credentials
+2025-06-24 11:57:40,306 - SportsRecommendation - INFO - Entraînement de contextual_bandit...
+2025-06-24 11:57:40,654 - SportsRecommendation - INFO - Contextual Bandit initialisé avec 114 actions
+2025-06-24 11:57:40,656 - SportsRecommendation - WARNING - Erreur calcul métriques de recommandation pour contextual_bandit: '<' not supported between instances of 'str' and 'float'
+2025-06-24 11:57:41,619 - SportsRecommendation - INFO - ContextualBandit sauvegardé dans ./outputs/models/contextual_bandit/contextual_bandit_model.joblib
+2025-06-24 11:57:42,513 - SportsRecommendation - ERROR - Erreur lors de l'entraînement de contextual_bandit: Unable to locate credentials
+2025-06-24 11:57:42,513 - SportsRecommendation - INFO - Entraînement de reinforcement_learning...
+2025-06-24 11:57:42,814 - SportsRecommendation - INFO - RL Recommender entraîné en 0.03s
+2025-06-24 11:57:42,816 - SportsRecommendation - WARNING - Erreur calcul métriques de recommandation pour reinforcement_learning: '<' not supported between instances of 'str' and 'float'
+2025-06-24 11:57:43,723 - SportsRecommendation - INFO - ReinforcementLearning sauvegardé dans ./outputs/models/reinforcement_learning/reinforcement_learning_model.joblib
+2025-06-24 11:57:44,628 - SportsRecommendation - ERROR - Erreur lors de l'entraînement de reinforcement_learning: Unable to locate credentials
+2025-06-24 11:57:44,628 - SportsRecommendation - INFO - Entraînement de hybrid...
+2025-06-24 11:57:44,914 - SportsRecommendation - WARNING - Aucun sous-modèle disponible pour l'hybride
+2025-06-24 11:57:45,529 - SportsRecommendation - INFO -  Entraînement terminé. 0 modèles entraînés sur 6
+2025-06-24 11:57:45,529 - SportsRecommendation - INFO - Évaluation finale des modèles...
+2025-06-24 11:57:45,529 - SportsRecommendation - INFO -  Évaluation finale terminée
+2025-06-24 11:57:45,529 - SportsRecommendation - INFO - Sauvegarde finale des modèles...
+2025-06-24 11:57:45,531 - SportsRecommendation - INFO - Rapport final généré: ./outputs/artifacts/final_training_report.json
+2025-06-24 11:57:45,531 - SportsRecommendation - INFO -  Sauvegarde terminée avec succès
+2025-06-24 11:57:45,531 - SportsRecommendation - INFO - ============================================================
+2025-06-24 11:57:45,531 - SportsRecommendation - INFO - PIPELINE D'ENTRAÎNEMENT TERMINÉ AVEC SUCCÈS!
+2025-06-24 11:57:45,531 - SportsRecommendation - INFO - Temps total: 3.27 minutes
+2025-06-24 11:57:45,531 - SportsRecommendation - INFO - Modèles entraînés: 0
+2025-06-24 11:57:45,531 - SportsRecommendation - INFO - Meilleurs modèles identifiés: 0
+2025-06-24 11:57:45,532 - SportsRecommendation - INFO - Artefacts sauvegardés dans: ./outputs/artifacts
+2025-06-24 11:57:45,532 - SportsRecommendation - INFO - ============================================================

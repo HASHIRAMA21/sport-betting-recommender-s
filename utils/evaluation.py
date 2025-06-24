@@ -117,7 +117,12 @@ class ModelEvaluator:
             for user_id, item_id, rating in zip(test_data['user_ids'], test_data['item_ids'], test_data['ratings']):
                 if user_id not in user_items_map:
                     user_items_map[user_id] = []
-                user_items_map[user_id].append((item_id, rating))
+                # Ensure rating is a float
+                try:
+                    float_rating = float(rating)
+                except (ValueError, TypeError):
+                    float_rating = 0.0
+                user_items_map[user_id].append((item_id, float_rating))
 
             # Calcul des métriques pour différents K
             k_values = [5, 10, 20]
@@ -278,4 +283,3 @@ class ModelEvaluator:
         except Exception as e:
             self.logger.error(f"Erreur dans compare_models: {e}")
             return pd.DataFrame()
-

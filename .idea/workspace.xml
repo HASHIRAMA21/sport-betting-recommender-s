@@ -9,14 +9,15 @@
   <component name="ChangeListManager">
     <list default="true" id="37248df5-0674-41e7-bb05-3c8f8e9c276a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/catboost_info/catboost_training.json" beforeDir="false" afterPath="$PROJECT_DIR$/catboost_info/catboost_training.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/catboost_info/learn/events.out.tfevents" beforeDir="false" afterPath="$PROJECT_DIR$/catboost_info/learn/events.out.tfevents" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/catboost_info/learn_error.tsv" beforeDir="false" afterPath="$PROJECT_DIR$/catboost_info/learn_error.tsv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/catboost_info/test/events.out.tfevents" beforeDir="false" afterPath="$PROJECT_DIR$/catboost_info/test/events.out.tfevents" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/catboost_info/test_error.tsv" beforeDir="false" afterPath="$PROJECT_DIR$/catboost_info/test_error.tsv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/catboost_info/time_left.tsv" beforeDir="false" afterPath="$PROJECT_DIR$/catboost_info/time_left.tsv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/advanced_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/advanced_processor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/data_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/model_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/model_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/evaluation.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/evaluation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,7 +214,7 @@
       <workItem from="1750691239805" duration="542000" />
       <workItem from="1750692449986" duration="7650000" />
       <workItem from="1750752702186" duration="816000" />
-      <workItem from="1750753606075" duration="6084000" />
+      <workItem from="1750753606075" duration="7649000" />
     </task>
     <servers />
   </component>
@@ -234,6 +235,6 @@
     <SUITE FILE_PATH="coverage/betting_recommender$advanced_processor.coverage" NAME="advanced_processor Coverage Results" MODIFIED="1750160630735" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data" />
     <SUITE FILE_PATH="coverage/betting_recommender$a.coverage" NAME="a Coverage Results" MODIFIED="1750087188568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/betting_recommender$train.coverage" NAME="train Coverage Results" MODIFIED="1750092290858" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/models" />
-    <SUITE FILE_PATH="coverage/betting_recommender$main.coverage" NAME="main Coverage Results" MODIFIED="1750760804964" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/betting_recommender$main.coverage" NAME="main Coverage Results" MODIFIED="1750762454539" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
