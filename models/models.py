@@ -1,22 +1,24 @@
+import time
+from abc import ABC, abstractmethod
+from concurrent.futures import ThreadPoolExecutor
+from typing import Dict, List, Tuple, Optional, Any
+
+import joblib
+import mlflow
+import mlflow.catboost
+import mlflow.pytorch
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader, TensorDataset
+import torch.optim as optim
 from catboost import CatBoostClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import roc_auc_score
-import mlflow
-import mlflow.pytorch
-import mlflow.catboost
 from scipy.sparse import csr_matrix
-from typing import Dict, List, Tuple, Optional, Any
-from abc import ABC, abstractmethod
-import joblib
-import time
-from concurrent.futures import ThreadPoolExecutor
+from sklearn.metrics import roc_auc_score
+from sklearn.preprocessing import StandardScaler
+from torch.utils.data import DataLoader, TensorDataset
+
 from helper.logging import logger
 from models.model_config import AlgorithmConfig
 
@@ -1464,7 +1466,18 @@ class RecommendationTrainer:
             true_ratings = np.array(true_ratings)
 
             # Prédiction
-            predicted_ratings = model.predict(np.array(user_ids), np.array(item_ids))
+            predicted_ratings_raw = model.predict(np.array(user_ids), np.array(item_ids))
+
+            # Conversion des prédictions en float
+            predicted_ratings = []
+            for p in predicted_ratings_raw:
+                try:
+                    predicted_ratings.append(float(p))
+                except (ValueError, TypeError):
+                    predicted_ratings.append(0.0)
+
+            # Conversion en array numpy
+            predicted_ratings = np.array(predicted_ratings)
 
             # Vérification que les arrays ont la même forme
             if len(true_ratings) != len(predicted_ratings):

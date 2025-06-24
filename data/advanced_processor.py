@@ -1,19 +1,20 @@
-import pandas as pd
-import numpy as np
-from scipy.sparse import csr_matrix, hstack
-from sklearn.preprocessing import StandardScaler, LabelEncoder, MinMaxScaler, RobustScaler
-from sklearn.feature_extraction.text import TfidfVectorizer
-from datetime import timedelta
-from typing import Dict, List, Tuple, Optional, Any
+import json
 import logging
+import pickle
 import warnings
 from dataclasses import dataclass, field
-from scipy.stats import entropy
-import json
-import pickle
+from datetime import timedelta
 from pathlib import Path
+from typing import Dict, List, Tuple, Optional, Any
+
 import joblib
+import numpy as np
+import pandas as pd
 from feast import Entity, Feature, FeatureView, ValueType, FileSource
+from scipy.sparse import csr_matrix, hstack
+from scipy.stats import entropy
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import StandardScaler, LabelEncoder, MinMaxScaler, RobustScaler
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -391,8 +392,6 @@ class AdvancedDataProcessor:
         Returns:
             pd.DataFrame: DataFrame enrichi avec les features dérivées.
         """
-
-        import numpy as np
 
         logger.info("Création des features dérivées hiérarchiques...")
 

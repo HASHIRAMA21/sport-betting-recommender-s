@@ -1,8 +1,8 @@
 import urllib
 from typing import Optional, Dict, Any
 
-import pandas as pd
 import mysql.connector
+import pandas as pd
 from sqlalchemy import create_engine
 
 from helper.logging import logger
