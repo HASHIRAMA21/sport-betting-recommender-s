@@ -95,8 +95,26 @@ class CollaborativeFilteringRecommender(BaseRecommender):
         start_time = time.time()
 
         # Extraction des données
-        user_ids = train_data['user_ids']
-        item_ids = train_data['item_ids']
+        user_ids_raw = train_data['user_ids']
+        item_ids_raw = train_data['item_ids']
+
+        # Convert user_ids and item_ids to numeric types
+        user_ids = []
+        for uid in user_ids_raw:
+            try:
+                user_ids.append(int(uid))
+            except (ValueError, TypeError):
+                user_ids.append(0)
+        user_ids = np.array(user_ids)
+
+        item_ids = []
+        for iid in item_ids_raw:
+            try:
+                item_ids.append(int(iid))
+            except (ValueError, TypeError):
+                item_ids.append(0)
+        item_ids = np.array(item_ids)
+
         ratings = []
         for r in train_data['ratings']:
             try:
@@ -192,9 +210,24 @@ class CollaborativeFilteringRecommender(BaseRecommender):
         """Validation du modèle."""
         self.model.eval()
 
-        val_user_ids = val_data['user_ids']
-        val_item_ids = val_data['item_ids']
+        val_user_ids_raw = val_data['user_ids']
+        val_item_ids_raw = val_data['item_ids']
         val_ratings = val_data['ratings']
+
+        # Convert user_ids and item_ids to numeric types
+        val_user_ids = []
+        for uid in val_user_ids_raw:
+            try:
+                val_user_ids.append(int(uid))
+            except (ValueError, TypeError):
+                val_user_ids.append(0)
+
+        val_item_ids = []
+        for iid in val_item_ids_raw:
+            try:
+                val_item_ids.append(int(iid))
+            except (ValueError, TypeError):
+                val_item_ids.append(0)
 
         # Conversion en indices
         val_user_indices = []
@@ -229,9 +262,24 @@ class CollaborativeFilteringRecommender(BaseRecommender):
         if not self.is_trained:
             raise ValueError("Le modèle doit être entraîné avant de faire des prédictions")
 
+        # Convert user_ids and item_ids to numeric types
+        numeric_user_ids = []
+        for uid in user_ids:
+            try:
+                numeric_user_ids.append(int(uid))
+            except (ValueError, TypeError):
+                numeric_user_ids.append(0)
+
+        numeric_item_ids = []
+        for iid in item_ids:
+            try:
+                numeric_item_ids.append(int(iid))
+            except (ValueError, TypeError):
+                numeric_item_ids.append(0)
+
         predictions = []
 
-        for uid, iid in zip(user_ids, item_ids):
+        for uid, iid in zip(numeric_user_ids, numeric_item_ids):
             if uid in self.user_mapping and iid in self.item_mapping:
                 user_idx = self.user_mapping[uid]
                 item_idx = self.item_mapping[iid]
@@ -254,23 +302,39 @@ class CollaborativeFilteringRecommender(BaseRecommender):
         if not self.is_trained:
             raise ValueError("Le modèle doit être entraîné avant de faire des recommandations")
 
-        if user_id not in self.user_mapping:
+        # Convert user_id to numeric type
+        try:
+            numeric_user_id = int(user_id)
+        except (ValueError, TypeError):
+            numeric_user_id = 0
+
+        if numeric_user_id not in self.user_mapping:
             return []  # Utilisateur inconnu
 
-        user_idx = self.user_mapping[user_id]
+        user_idx = self.user_mapping[numeric_user_id]
         item_ids = list(self.item_mapping.keys())
 
         # Calcul des scores pour tous les items
         scores = []
         for item_id in item_ids:
-            item_idx = self.item_mapping[item_id]
+            # Ensure item_id is numeric
+            try:
+                numeric_item_id = int(item_id)
+            except (ValueError, TypeError):
+                numeric_item_id = 0
+
+            # Skip if item_id is not in the mapping
+            if numeric_item_id not in self.item_mapping:
+                continue
+
+            item_idx = self.item_mapping[numeric_item_id]
             score = (
                     self.global_bias +
                     self.user_biases[user_idx] +
                     self.item_biases[item_idx] +
                     np.dot(self.user_factors[user_idx], self.item_factors[item_idx])
             )
-            scores.append((item_id, score))
+            scores.append((numeric_item_id, score))
 
         # Tri et sélection du top-N
         scores.sort(key=lambda x: x[1], reverse=True)
@@ -362,8 +426,22 @@ class ContentBasedRecommender(BaseRecommender):
         # Préparation des données d'entraînement
         X_train, y_train = self._prepare_training_data(user_item_interactions, user_profiles, item_feature_matrix)
 
+        # Vérifier si les données d'entraînement sont vides
+        if len(X_train) == 0 or len(y_train) == 0:
+            logger.error("Aucune donnée d'entraînement valide n'a été générée. Impossible d'entraîner le modèle.")
+            self.is_trained = False
+            self.training_time = time.time() - start_time
+            return self
+
         # Création du modèle
         device = torch.device('cuda' if torch.cuda.is_available() and self.config.enable_gpu else 'cpu')
+
+        # Vérifier que X_train a au moins 2 dimensions
+        if len(X_train.shape) < 2:
+            logger.error(f"Les données d'entraînement n'ont pas la forme attendue. Shape: {X_train.shape}")
+            self.is_trained = False
+            self.training_time = time.time() - start_time
+            return self
 
         input_dim = X_train.shape[1]
         self.model = ContentBasedModel(
@@ -436,13 +514,40 @@ class ContentBasedRecommender(BaseRecommender):
                     if item_idx < len(item_features):
                         # Handle different types of item_features
                         if isinstance(item_features, pd.DataFrame):
-                            item_feature = item_features.iloc[item_idx].values
+                            try:
+                                item_feature = item_features.iloc[item_idx].values
+                            except (IndexError, KeyError):
+                                logger.debug(f"Item index {item_idx} not found in DataFrame")
+                                continue
                         elif isinstance(item_features, csr_matrix):
-                            item_feature = item_features[item_idx].toarray()[0]
+                            try:
+                                # Check if item_idx is within bounds
+                                if item_idx < item_features.shape[0]:
+                                    item_feature_array = item_features[item_idx].toarray()
+                                    if item_feature_array.size > 0:
+                                        item_feature = item_feature_array[0]
+                                    else:
+                                        logger.debug(f"Empty array for item index {item_idx}")
+                                        continue
+                                else:
+                                    logger.debug(f"Item index {item_idx} out of bounds")
+                                    continue
+                            except (IndexError, ValueError, TypeError) as e:
+                                logger.debug(f"Error accessing item {item_idx} in csr_matrix: {e}")
+                                continue
                         elif isinstance(item_features, np.ndarray):
-                            item_feature = item_features[item_idx]
+                            try:
+                                if item_idx < len(item_features):
+                                    item_feature = item_features[item_idx]
+                                else:
+                                    logger.debug(f"Item index {item_idx} out of bounds")
+                                    continue
+                            except (IndexError, TypeError) as e:
+                                logger.debug(f"Error accessing item {item_idx} in ndarray: {e}")
+                                continue
                         else:
                             # Skip unknown types
+                            logger.debug(f"Unknown item_features type: {type(item_features)}")
                             continue
 
                         weighted_features += rating * item_feature
@@ -478,13 +583,40 @@ class ContentBasedRecommender(BaseRecommender):
 
                     # Handle different types of item_features
                     if isinstance(item_features, pd.DataFrame):
-                        item_feature = item_features.iloc[item_id].values
+                        try:
+                            item_feature = item_features.iloc[item_id].values
+                        except (IndexError, KeyError):
+                            logger.debug(f"Item index {item_id} not found in DataFrame")
+                            continue
                     elif isinstance(item_features, csr_matrix):
-                        item_feature = item_features[item_id].toarray()[0]
+                        try:
+                            # Check if item_id is within bounds
+                            if item_id < item_features.shape[0]:
+                                item_feature_array = item_features[item_id].toarray()
+                                if item_feature_array.size > 0:
+                                    item_feature = item_feature_array[0]
+                                else:
+                                    logger.debug(f"Empty array for item index {item_id}")
+                                    continue
+                            else:
+                                logger.debug(f"Item index {item_id} out of bounds")
+                                continue
+                        except (IndexError, ValueError, TypeError) as e:
+                            logger.debug(f"Error accessing item {item_id} in csr_matrix: {e}")
+                            continue
                     elif isinstance(item_features, np.ndarray):
-                        item_feature = item_features[item_id]
+                        try:
+                            if item_id < len(item_features):
+                                item_feature = item_features[item_id]
+                            else:
+                                logger.debug(f"Item index {item_id} out of bounds")
+                                continue
+                        except (IndexError, TypeError) as e:
+                            logger.debug(f"Error accessing item {item_id} in ndarray: {e}")
+                            continue
                     else:
                         # Skip unknown types
+                        logger.debug(f"Unknown item_features type: {type(item_features)}")
                         continue
 
                     combined_features = np.concatenate([user_profile, item_feature])
@@ -514,14 +646,55 @@ class ContentBasedRecommender(BaseRecommender):
                         user_profile = self.user_profiles[user_id]
 
                         # Handle different types of item_features
-                        if isinstance(self.item_features, pd.DataFrame):
-                            item_feature = self.scaler.transform([self.item_features.iloc[item_id].values])[0]
-                        elif isinstance(self.item_features, csr_matrix):
-                            item_feature = self.scaler.transform([self.item_features[item_id].toarray()[0]])[0]
-                        elif isinstance(self.item_features, np.ndarray):
-                            item_feature = self.scaler.transform([self.item_features[item_id]])[0]
-                        else:
-                            # Fallback for unknown type
+                        try:
+                            if isinstance(self.item_features, pd.DataFrame):
+                                try:
+                                    raw_feature = self.item_features.iloc[item_id].values
+                                    item_feature = self.scaler.transform([raw_feature])[0]
+                                except (IndexError, KeyError):
+                                    logger.debug(f"Item index {item_id} not found in DataFrame")
+                                    predictions.append(0.0)
+                                    continue
+                            elif isinstance(self.item_features, csr_matrix):
+                                try:
+                                    # Check if item_id is within bounds
+                                    if item_id < self.item_features.shape[0]:
+                                        item_feature_array = self.item_features[item_id].toarray()
+                                        if item_feature_array.size > 0:
+                                            raw_feature = item_feature_array[0]
+                                            item_feature = self.scaler.transform([raw_feature])[0]
+                                        else:
+                                            logger.debug(f"Empty array for item index {item_id}")
+                                            predictions.append(0.0)
+                                            continue
+                                    else:
+                                        logger.debug(f"Item index {item_id} out of bounds")
+                                        predictions.append(0.0)
+                                        continue
+                                except (IndexError, ValueError, TypeError) as e:
+                                    logger.debug(f"Error accessing item {item_id} in csr_matrix: {e}")
+                                    predictions.append(0.0)
+                                    continue
+                            elif isinstance(self.item_features, np.ndarray):
+                                try:
+                                    if item_id < len(self.item_features):
+                                        raw_feature = self.item_features[item_id]
+                                        item_feature = self.scaler.transform([raw_feature])[0]
+                                    else:
+                                        logger.debug(f"Item index {item_id} out of bounds")
+                                        predictions.append(0.0)
+                                        continue
+                                except (IndexError, TypeError) as e:
+                                    logger.debug(f"Error accessing item {item_id} in ndarray: {e}")
+                                    predictions.append(0.0)
+                                    continue
+                            else:
+                                # Fallback for unknown type
+                                logger.debug(f"Unknown item_features type: {type(self.item_features)}")
+                                predictions.append(0.0)
+                                continue
+                        except Exception as e:
+                            logger.debug(f"Error transforming item features for item {item_id}: {e}")
                             predictions.append(0.0)
                             continue
 
@@ -854,15 +1027,43 @@ class ContextualCatBoostRecommender(BaseRecommender):
         if not self.is_trained:
             raise ValueError("Le modèle doit être entraîné avant de faire des prédictions")
 
-        # Construction du DataFrame de features pour la prédiction
-        # Cette partie dépend de la structure des données contextuelles
-        # Implémentation simplifiée
-        if context and 'features' in context:
-            X_pred = context['features']
-            return self.model.predict_proba(X_pred)[:, 1]
-        else:
-            # Fallback avec scores neutres
-            return np.full(len(user_ids), 0.5)
+        try:
+            # Construction du DataFrame de features pour la prédiction
+            # Cette partie dépend de la structure des données contextuelles
+            # Implémentation simplifiée
+            if context and 'features' in context:
+                X_pred = context['features']
+
+                # Ensure X_pred is a DataFrame with the expected columns
+                if not isinstance(X_pred, pd.DataFrame):
+                    if hasattr(X_pred, 'toarray'):  # For sparse matrices
+                        X_pred = pd.DataFrame(X_pred.toarray())
+                    else:
+                        X_pred = pd.DataFrame(X_pred)
+
+                # Ensure column names match those used during training
+                if self.feature_columns and set(X_pred.columns) != set(self.feature_columns):
+                    # Create a new DataFrame with the expected columns
+                    new_X_pred = pd.DataFrame()
+                    for col in self.feature_columns:
+                        if col in X_pred.columns:
+                            new_X_pred[col] = X_pred[col]
+                        else:
+                            new_X_pred[col] = 0  # Default value for missing columns
+                    X_pred = new_X_pred[self.feature_columns]  # Ensure column order matches
+
+                # Get predictions and ensure they are numeric
+                proba = self.model.predict_proba(X_pred)
+                if proba.shape[1] > 1:
+                    return np.array([float(p) for p in proba[:, 1]])
+                else:
+                    return np.array([float(p) for p in proba[:, 0]])
+            else:
+                # Fallback with neutral scores
+                return np.array([0.5] * len(user_ids))
+        except Exception as e:
+            logger.warning(f"Error in predict method: {e}")
+            return np.array([0.5] * len(user_ids))
 
     def recommend(self, user_id: int, n_recommendations: int = 10, context: Optional[Dict] = None) -> List[
         Tuple[int, float]]:
@@ -870,9 +1071,44 @@ class ContextualCatBoostRecommender(BaseRecommender):
         if not self.is_trained:
             raise ValueError("Le modèle doit être entraîné avant de faire des recommandations")
 
-        # Implémentation dépendante du contexte spécifique
-        # Retourne une liste vide par défaut
-        return []
+        try:
+            # Convert user_id to numeric if it's a string
+            numeric_user_id = int(user_id) if isinstance(user_id, str) else user_id
+
+            # Implémentation dépendante du contexte spécifique
+            # Si le contexte contient des items à évaluer, on peut les prédire
+            if context and 'candidate_items' in context:
+                candidate_items = context['candidate_items']
+                item_features = context.get('item_features', {})
+
+                # Préparer les features pour chaque item candidat
+                item_scores = []
+
+                for item_id in candidate_items:
+                    try:
+                        # Convert item_id to numeric
+                        numeric_item_id = int(item_id) if isinstance(item_id, str) else item_id
+
+                        # Get item features if available
+                        if numeric_item_id in item_features:
+                            # Create a context with this item's features
+                            item_context = {'features': item_features[numeric_item_id]}
+                            # Predict score
+                            score = float(self.predict([numeric_user_id], [numeric_item_id], item_context)[0])
+                            item_scores.append((numeric_item_id, score))
+                    except (ValueError, TypeError) as e:
+                        logger.debug(f"Error processing item {item_id}: {e}")
+                        continue
+
+                # Sort by score and return top-N
+                item_scores.sort(key=lambda x: x[1], reverse=True)
+                return item_scores[:n_recommendations]
+
+            # Fallback: return empty list if no context or candidate items
+            return []
+        except Exception as e:
+            logger.warning(f"Error in recommend method: {e}")
+            return []
 
 
 class ContextualBanditRecommender(BaseRecommender):
@@ -955,34 +1191,59 @@ class ContextualBanditRecommender(BaseRecommender):
         predictions = []
 
         for user_id, item_id in zip(user_ids, item_ids):
-            if item_id in self.action_rewards and self.action_counts[item_id] > 0:
-                avg_reward = self.action_rewards[item_id] / self.action_counts[item_id]
-                predictions.append(avg_reward)
-            else:
-                predictions.append(0.5)  # Score neutre pour les actions inconnues
+            try:
+                # Convert item_id to numeric if it's a string
+                numeric_item_id = int(item_id) if isinstance(item_id, str) else item_id
+
+                if numeric_item_id in self.action_rewards and self.action_counts[numeric_item_id] > 0:
+                    avg_reward = self.action_rewards[numeric_item_id] / self.action_counts[numeric_item_id]
+                    predictions.append(float(avg_reward))
+                else:
+                    predictions.append(0.5)  # Score neutre pour les actions inconnues
+            except (ValueError, TypeError) as e:
+                logger.debug(f"Error in predict for item {item_id}: {e}")
+                predictions.append(0.5)  # Fallback for errors
 
         return np.array(predictions)
 
     def recommend(self, user_id: int, n_recommendations: int = 10, context: Optional[Dict] = None) -> List[
         Tuple[int, float]]:
         """Recommande en utilisant la stratégie du bandit."""
-        available_actions = list(self.action_counts.keys())
+        try:
+            # Convert user_id to numeric if it's a string
+            numeric_user_id = int(user_id) if isinstance(user_id, str) else user_id
 
-        if not available_actions:
+            # Convert all keys to numeric to ensure consistent types
+            available_actions = []
+            for action in self.action_counts.keys():
+                try:
+                    numeric_action = int(action) if isinstance(action, str) else action
+                    available_actions.append(numeric_action)
+                except (ValueError, TypeError):
+                    continue
+
+            if not available_actions:
+                return []
+
+            # Sélection des top actions
+            action_scores = []
+            for action in available_actions:
+                try:
+                    if self.action_counts[action] > 0:
+                        score = float(self.action_rewards[action]) / float(self.action_counts[action])
+                    else:
+                        score = 0.5
+                    action_scores.append((int(action), float(score)))
+                except (ValueError, TypeError, KeyError) as e:
+                    logger.debug(f"Error calculating score for action {action}: {e}")
+                    continue
+
+            # Tri et sélection
+            action_scores.sort(key=lambda x: x[1], reverse=True)
+            return action_scores[:n_recommendations]
+        except Exception as e:
+            logger.warning(f"Error in recommend method: {e}")
             return []
-
-        # Sélection des top actions
-        action_scores = []
-        for action in available_actions:
-            if self.action_counts[action] > 0:
-                score = self.action_rewards[action] / self.action_counts[action]
-            else:
-                score = 0.5
-            action_scores.append((action, score))
-
-        # Tri et sélection
-        action_scores.sort(key=lambda x: x[1], reverse=True)
-        return action_scores[:n_recommendations]
 
 
 class ReinforcementLearningRecommender(BaseRecommender):
@@ -1186,19 +1447,39 @@ class RecommendationTrainer:
             # Évaluation basique
             user_ids = val_data.get('user_ids', [])
             item_ids = val_data.get('item_ids', [])
-            true_ratings = val_data.get('ratings', [])
+            true_ratings_raw = val_data.get('ratings', [])
 
             if len(user_ids) == 0:
                 return {}
 
+            # Conversion des ratings en float
+            true_ratings = []
+            for r in true_ratings_raw:
+                try:
+                    true_ratings.append(float(r))
+                except (ValueError, TypeError):
+                    true_ratings.append(0.0)
+
+            # Conversion en array numpy
+            true_ratings = np.array(true_ratings)
+
+            # Prédiction
             predicted_ratings = model.predict(np.array(user_ids), np.array(item_ids))
+
+            # Vérification que les arrays ont la même forme
+            if len(true_ratings) != len(predicted_ratings):
+                logger.warning(f"Les dimensions des ratings réels ({len(true_ratings)}) et prédits ({len(predicted_ratings)}) ne correspondent pas.")
+                # Ajuster les dimensions si nécessaire
+                min_len = min(len(true_ratings), len(predicted_ratings))
+                true_ratings = true_ratings[:min_len]
+                predicted_ratings = predicted_ratings[:min_len]
 
             # Calcul des métriques
             mse = np.mean((true_ratings - predicted_ratings) ** 2)
             mae = np.mean(np.abs(true_ratings - predicted_ratings))
 
             # Conversion en classification binaire pour AUC
-            binary_true = (np.array(true_ratings) > np.mean(true_ratings)).astype(int)
+            binary_true = (true_ratings > np.mean(true_ratings)).astype(int)
 
             try:
                 auc = roc_auc_score(binary_true, predicted_ratings)

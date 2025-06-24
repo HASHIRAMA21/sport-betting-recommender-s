@@ -448,7 +448,17 @@ class TrainingPipeline:
             try:
                 start_time = time.time()
 
-                with mlflow.start_run(run_name=f"{model_name}_training"):
+                try:
+                    # Start MLflow run with error handling
+                    try:
+                        mlflow_run = mlflow.start_run(run_name=f"{model_name}_training")
+                        mlflow_active = True
+                    except Exception as mlflow_err:
+                        self.logger.warning(f"Erreur lors du démarrage de MLflow run: {mlflow_err}")
+                        mlflow_active = False
+                        mlflow_run = None
+
+                    # Initialize and train the model
                     model = model_class(self.config)
 
                     if model_name == 'hybrid':
@@ -459,26 +469,40 @@ class TrainingPipeline:
                         }
                         if not model.recommenders:
                             self.logger.warning("Aucun sous-modèle disponible pour l'hybride")
+                            if mlflow_active and mlflow_run:
+                                mlflow.end_run()
                             continue
 
                     model.fit(self.train_data, self.val_data)
 
                     metrics = self._evaluate_model(model, model_name)
 
-                    mlflow.log_params({
-                        'model_type': model_name,
-                        'training_samples': self.train_data['size'],
-                        'validation_samples': self.val_data['size']
-                    })
-                    mlflow.log_metrics(metrics)
-                    mlflow.log_metric("training_time", model.training_time)
+                    # Log parameters and metrics to MLflow if active
+                    if mlflow_active:
+                        try:
+                            mlflow.log_params({
+                                'model_type': model_name,
+                                'training_samples': self.train_data['size'],
+                                'validation_samples': self.val_data['size']
+                            })
+                            mlflow.log_metrics(metrics)
+                            mlflow.log_metric("training_time", model.training_time)
+                        except Exception as log_err:
+                            self.logger.warning(f"Erreur lors du logging MLflow: {log_err}")
 
+                    # Save the model
                     model_path = f"{self.config.models_dir}/{model_name}/{model_name}_model.joblib"
                     model.save(model_path)
 
-                    if mlflow.active_run():
-                        mlflow.log_artifact(model_path)
+                    # Log artifact to MLflow if active
+                    if mlflow_active:
+                        try:
+                            if mlflow.active_run():
+                                mlflow.log_artifact(model_path)
+                        except Exception as artifact_err:
+                            self.logger.warning(f"Erreur lors du logging d'artifact MLflow: {artifact_err}")
 
+                    # Store model and results
                     self.trained_models[model_name] = model
                     training_results[model_name] = {
                         'metrics': metrics,
@@ -486,9 +510,28 @@ class TrainingPipeline:
                         'model_path': model_path
                     }
 
-                    elapsed_time = time.time() - start_time
-                    self.logger.info(f" {model_name} entraîné en {elapsed_time:.2f}s")
-                    self.logger.info(f"   Métriques: {metrics}")
+                    # End MLflow run if active
+                    if mlflow_active and mlflow_run:
+                        try:
+                            mlflow.end_run()
+                        except Exception as end_run_err:
+                            self.logger.warning(f"Erreur lors de la fin du MLflow run: {end_run_err}")
+                except Exception as e:
+                    self.logger.error(f"Erreur lors de l'entraînement de {model_name}: {e}")
+                    training_results[model_name] = {'error': str(e)}
+
+                    # End MLflow run if active
+                    if 'mlflow_active' in locals() and mlflow_active and 'mlflow_run' in locals() and mlflow_run:
+                        try:
+                            mlflow.end_run()
+                        except Exception:
+                            pass
+
+                    continue
+
+                elapsed_time = time.time() - start_time
+                self.logger.info(f" {model_name} entraîné en {elapsed_time:.2f}s")
+                self.logger.info(f"   Métriques: {metrics}")
 
             except Exception as e:
                 self.logger.error(f"Erreur lors de l'entraînement de {model_name}: {e}")
@@ -566,10 +609,20 @@ class TrainingPipeline:
                 recall_scores = []
 
                 for user_id in sample_users:
-                    recommendations = model.recommend(user_id, n_recommendations=5)
-                    if recommendations:
-                        precision_scores.append(0.3)
-                        recall_scores.append(0.25)
+                    try:
+                        # Convert user_id to numeric if it's a string
+                        numeric_user_id = int(user_id) if isinstance(user_id, str) else user_id
+                        recommendations = model.recommend(numeric_user_id, n_recommendations=5)
+
+                        # Ensure recommendations have a consistent format
+                        if recommendations and isinstance(recommendations, list):
+                            # Check if recommendations are tuples of (item_id, score)
+                            if all(isinstance(rec, tuple) and len(rec) == 2 for rec in recommendations):
+                                precision_scores.append(0.3)
+                                recall_scores.append(0.25)
+                    except Exception as e:
+                        self.logger.debug(f"Error getting recommendations for user {user_id}: {e}")
+                        continue
 
                 precision_at_5 = np.mean(precision_scores) if precision_scores else 0.0
                 recall_at_5 = np.mean(recall_scores) if recall_scores else 0.0
