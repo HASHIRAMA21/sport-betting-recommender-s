@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 
-import sys
 import argparse
 import json
+import sys
 import time
-from pathlib import Path
-from datetime import datetime
-from typing import Dict, Any, Optional, List, Tuple
 import warnings
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, Any, Tuple
 
-import pandas as pd
-import numpy as np
 import mlflow
+import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from configs.processing_config import ProcessingConfig
-from data.advanced_processor import AdvancedDataProcessor, logger
+from data.advanced_processor import AdvancedDataProcessor
 from data.data_loader import SportsDataLoader
 from data.database_connector import DatabaseConnector
 from helper.logging import setup_logging

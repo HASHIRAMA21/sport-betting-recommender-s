@@ -9,31 +9,6 @@
   <component name="ChangeListManager">
     <list default="true" id="37248df5-0674-41e7-bb05-3c8f8e9c276a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/catboost_info/catboost_training.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/catboost_info/learn/events.out.tfevents" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/catboost_info/learn_error.tsv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/catboost_info/test/events.out.tfevents" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/catboost_info/test_error.tsv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/catboost_info/time_left.tsv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250624_113919.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/recommendation_20250624_115423.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/evaluation_results.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/final_training_report.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/preprocessor/event_features.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/preprocessor/hierarchical_data_sample.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/preprocessor/market_outcome_features.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/preprocessor/processing_artifacts.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/preprocessor/user_item_matrix.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/preprocessor_metadata.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/training_results.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/artifacts/training_summary.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250624_113925.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/logs/recommendation_20250624_115429.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/models/contextual_bandit/contextual_bandit_model.joblib" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/models/contextual_catboost/contextual_catboost_model.joblib" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/models/reinforcement_learning/reinforcement_learning_model.joblib" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -230,7 +205,7 @@
       <workItem from="1750691239805" duration="542000" />
       <workItem from="1750692449986" duration="7650000" />
       <workItem from="1750752702186" duration="816000" />
-      <workItem from="1750753606075" duration="11642000" />
+      <workItem from="1750753606075" duration="17736000" />
     </task>
     <servers />
   </component>
@@ -251,6 +226,6 @@
     <SUITE FILE_PATH="coverage/betting_recommender$advanced_processor.coverage" NAME="advanced_processor Coverage Results" MODIFIED="1750160630735" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data" />
     <SUITE FILE_PATH="coverage/betting_recommender$a.coverage" NAME="a Coverage Results" MODIFIED="1750087188568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/betting_recommender$train.coverage" NAME="train Coverage Results" MODIFIED="1750092290858" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/models" />
-    <SUITE FILE_PATH="coverage/betting_recommender$main.coverage" NAME="main Coverage Results" MODIFIED="1750770635365" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/betting_recommender$main.coverage" NAME="main Coverage Results" MODIFIED="1750775422423" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

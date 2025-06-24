@@ -1,41 +1,35 @@
-import os
 import sys
-import json
-import pickle
-import logging
 import argparse
+import json
+import logging
+import pickle
+import sys
 import urllib.parse
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any, Union
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta
 import warnings
+from dataclasses import dataclass, field
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Tuple, Optional, Any
 
+# MLflow
+import mlflow
+import mlflow.catboost
+import mlflow.pytorch
+# Database
+import mysql.connector
 # Data & ML
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader, TensorDataset
-from scipy.sparse import csr_matrix, hstack
-from sklearn.preprocessing import StandardScaler, LabelEncoder, MinMaxScaler, RobustScaler
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import roc_auc_score, mean_squared_error, mean_absolute_error
+import torch.optim as optim
+from catboost import CatBoostClassifier
+from scipy.sparse import csr_matrix
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.model_selection import train_test_split
-from catboost import CatBoostClassifier, CatBoostRegressor
-from scipy.stats import entropy
-
-# Database
-import mysql.connector
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler, RobustScaler
 from sqlalchemy import create_engine
-import joblib
-
-# MLflow
-import mlflow
-import mlflow.pytorch
-import mlflow.catboost
 
 # Disable warnings
 warnings.filterwarnings('ignore')

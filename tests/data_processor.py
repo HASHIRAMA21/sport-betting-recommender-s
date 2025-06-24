@@ -1,15 +1,16 @@
-import pandas as pd
-import numpy as np
-from scipy.sparse import csr_matrix, hstack
-from sklearn.preprocessing import StandardScaler, LabelEncoder, MinMaxScaler, RobustScaler
-from sklearn.feature_extraction.text import TfidfVectorizer
-from datetime import timedelta
-from typing import Dict, List, Tuple, Optional, Any
-from scipy.stats import entropy
 import pickle
+from datetime import timedelta
 from pathlib import Path
+from typing import Dict, List, Tuple, Optional, Any
+
 import joblib
+import numpy as np
+import pandas as pd
 from feast import Entity, Feature, FeatureView, ValueType, FileSource
+from scipy.sparse import csr_matrix, hstack
+from scipy.stats import entropy
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import StandardScaler, LabelEncoder, MinMaxScaler, RobustScaler
 
 from configs.processing_config import ProcessingConfig
 from helper.logging import logger

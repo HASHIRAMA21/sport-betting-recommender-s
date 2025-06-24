@@ -1,12 +1,13 @@
 import logging
+import warnings
+from typing import Dict, Any
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Any
 from sklearn.metrics import (
     mean_squared_error, mean_absolute_error, roc_auc_score,
-    precision_recall_curve, average_precision_score
+    average_precision_score
 )
-import warnings
 
 warnings.filterwarnings('ignore')
 
