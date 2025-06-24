@@ -64,7 +64,7 @@ class AlgorithmConfig:
 
     # MLflow
     mlflow_tracking_uri: str = "http://51.91.128.26:5000"
-    mlflow_experiment_name: str = "sports_betting_recommendation"
+    mlflow_experiment_name: str = "betting_recommendation"
 
     # Performance
     enable_gpu: bool = True

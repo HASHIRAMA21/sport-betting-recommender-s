@@ -1,0 +1,72 @@
+2025-06-24 11:01:52,511 - SportsRecommendation - INFO - Démarrage du pipeline d'entraînement complet
+2025-06-24 11:01:55,088 - SportsRecommendation - INFO -  MLflow configuré avec succès
+2025-06-24 11:01:55,088 - SportsRecommendation - INFO - Chargement des données...
+2025-06-24 11:01:56,708 - SportsRecommendation - INFO - Connexion à la base de données établie
+2025-06-24 11:01:56,708 - SportsRecommendation - INFO - === CHARGEMENT COMPLET DES DONNÉES ===
+2025-06-24 11:01:56,708 - SportsRecommendation - INFO - === DIAGNOSTIC DES DONNÉES DE PARIS ===
+2025-06-24 11:02:04,036 - SportsRecommendation - INFO - === RÉSULTATS DU DIAGNOSTIC ===
+2025-06-24 11:02:04,042 - SportsRecommendation - INFO - bets: {'total_rows': 154971, 'valid_bet_amounts': 154971, 'valid_user_ids': 154971, 'valid_event_ids': 154971, 'valid_outcome_ids': 0, 'oldest_bet': Timestamp('2023-02-06 17:17:17'), 'newest_bet': Timestamp('2025-04-11 17:55:19'), 'unique_users': 2283, 'unique_events': 1994}
+2025-06-24 11:02:04,043 - SportsRecommendation - INFO - recent_activity: [{'bet_date': datetime.date(2025, 4, 11), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 24), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 21), 'daily_bets': 13}, {'bet_date': datetime.date(2025, 3, 20), 'daily_bets': 4}, {'bet_date': datetime.date(2025, 3, 18), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 13), 'daily_bets': 3}, {'bet_date': datetime.date(2025, 3, 11), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 10), 'daily_bets': 3}, {'bet_date': datetime.date(2025, 3, 5), 'daily_bets': 2}, {'bet_date': datetime.date(2025, 3, 4), 'daily_bets': 9}]
+2025-06-24 11:02:04,043 - SportsRecommendation - INFO - users: 3413
+2025-06-24 11:02:04,043 - SportsRecommendation - INFO - events: 1368324
+2025-06-24 11:02:04,043 - SportsRecommendation - INFO - markets: 29626
+2025-06-24 11:02:04,044 - SportsRecommendation - INFO - joins: {'total_bets': 154971}
+2025-06-24 11:02:04,044 - SportsRecommendation - INFO - Chargement des données utilisateurs...
+2025-06-24 11:02:05,360 - SportsRecommendation - INFO - Utilisateurs chargés: 3413 enregistrements
+2025-06-24 11:02:05,361 - SportsRecommendation - INFO - Chargement des événements (120 derniers jours)...
+2025-06-24 11:02:25,684 - SportsRecommendation - INFO - Événements chargés: 50000 enregistrements
+2025-06-24 11:02:31,403 - SportsRecommendation - INFO - Marchés chargés: 29626 enregistrements
+2025-06-24 11:02:34,747 - SportsRecommendation - INFO - Outcomes chargés: 29626 enregistrements
+2025-06-24 11:02:51,917 - SportsRecommendation - INFO - Paris chargés: 41406 lignes
+2025-06-24 11:02:58,508 - SportsRecommendation - INFO - Historique cotes chargé: 29626 enregistrements
+2025-06-24 11:02:58,509 - SportsRecommendation - INFO - === RÉSUMÉ DU CHARGEMENT ===
+2025-06-24 11:02:58,509 - SportsRecommendation - INFO - users: 3413 enregistrements
+2025-06-24 11:02:58,509 - SportsRecommendation - INFO - events: 50000 enregistrements
+2025-06-24 11:02:58,509 - SportsRecommendation - INFO - markets: 29626 enregistrements
+2025-06-24 11:02:58,509 - SportsRecommendation - INFO - outcomes: 29626 enregistrements
+2025-06-24 11:02:58,509 - SportsRecommendation - INFO - bets: 41406 enregistrements
+2025-06-24 11:02:58,510 - SportsRecommendation - INFO - odds_history: 29626 enregistrements
+2025-06-24 11:02:58,523 - SportsRecommendation - INFO -  Données chargées avec succès
+2025-06-24 11:02:58,523 - SportsRecommendation - INFO - Résumé des données:
+2025-06-24 11:02:58,523 - SportsRecommendation - INFO -   - users: 3,413 enregistrements
+2025-06-24 11:02:58,523 - SportsRecommendation - INFO -   - events: 50,000 enregistrements
+2025-06-24 11:02:58,523 - SportsRecommendation - INFO -   - markets: 29,626 enregistrements
+2025-06-24 11:02:58,523 - SportsRecommendation - INFO -   - outcomes: 29,626 enregistrements
+2025-06-24 11:02:58,523 - SportsRecommendation - INFO -   - bets: 41,406 enregistrements
+2025-06-24 11:02:58,523 - SportsRecommendation - INFO -   - odds_history: 29,626 enregistrements
+2025-06-24 11:02:58,672 - SportsRecommendation - INFO - Connexion DB fermée
+2025-06-24 11:02:58,672 - SportsRecommendation - INFO - Préprocessing des données...
+2025-06-24 11:04:23,164 - SportsRecommendation - INFO -  Préprocessing terminé avec succès
+2025-06-24 11:04:23,165 - SportsRecommendation - INFO - Résumé du préprocessing:
+2025-06-24 11:04:23,165 - SportsRecommendation - INFO -   - Matrice user-item: (12, 46)
+2025-06-24 11:04:23,165 - SportsRecommendation - INFO -   - Features événements: (50000, 305)
+2025-06-24 11:04:23,165 - SportsRecommendation - INFO -   - Features comportementales: 0
+2025-06-24 11:04:23,165 - SportsRecommendation - INFO -   - Encodeurs créés: 10
+2025-06-24 11:04:23,165 - SportsRecommendation - INFO - Division des données...
+2025-06-24 11:04:23,171 - SportsRecommendation - WARNING - Colonnes dupliquées détectées dans les features: ['hours_until_event', 'days_since_registration', 'bet_timing_hours_before']
+2025-06-24 11:04:23,171 - SportsRecommendation - INFO - Colonne renommée: hours_until_event -> hours_until_event_1
+2025-06-24 11:04:23,172 - SportsRecommendation - INFO - Colonne renommée: days_since_registration -> days_since_registration_1
+2025-06-24 11:04:23,172 - SportsRecommendation - INFO - Colonne renommée: bet_timing_hours_before -> bet_timing_hours_before_1
+2025-06-24 11:04:23,173 - SportsRecommendation - WARNING - Colonnes dupliquées détectées dans les features: ['hours_until_event', 'days_since_registration', 'bet_timing_hours_before']
+2025-06-24 11:04:23,173 - SportsRecommendation - INFO - Colonne renommée: hours_until_event -> hours_until_event_1
+2025-06-24 11:04:23,173 - SportsRecommendation - INFO - Colonne renommée: days_since_registration -> days_since_registration_1
+2025-06-24 11:04:23,173 - SportsRecommendation - INFO - Colonne renommée: bet_timing_hours_before -> bet_timing_hours_before_1
+2025-06-24 11:04:23,175 - SportsRecommendation - WARNING - Colonnes dupliquées détectées dans les features: ['hours_until_event', 'days_since_registration', 'bet_timing_hours_before']
+2025-06-24 11:04:23,175 - SportsRecommendation - INFO - Colonne renommée: hours_until_event -> hours_until_event_1
+2025-06-24 11:04:23,175 - SportsRecommendation - INFO - Colonne renommée: days_since_registration -> days_since_registration_1
+2025-06-24 11:04:23,175 - SportsRecommendation - INFO - Colonne renommée: bet_timing_hours_before -> bet_timing_hours_before_1
+2025-06-24 11:04:23,175 - SportsRecommendation - INFO -  Division des données terminée
+2025-06-24 11:04:23,176 - SportsRecommendation - INFO -   - Train: 114 exemples
+2025-06-24 11:04:23,176 - SportsRecommendation - INFO -   - Validation: 39 exemples
+2025-06-24 11:04:23,176 - SportsRecommendation - INFO -   - Test: 39 exemples
+2025-06-24 11:04:23,176 - SportsRecommendation - INFO - Début de l'entraînement des modèles...
+2025-06-24 11:04:23,655 - SportsRecommendation - WARNING - La variable cible ne contient qu'une seule valeur unique: ['none']. CatBoost nécessite au moins deux valeurs uniques.
+2025-06-24 11:04:23,656 - SportsRecommendation - ERROR - ÉCHEC DU PIPELINE: unsupported operand type(s) for -: 'int' and 'str'
+2025-06-24 11:04:23,656 - SportsRecommendation - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 771, in run_full_pipeline
+    self.train_models()
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 389, in train_models
+    synthetic_targets[indices_to_modify] = 1 - synthetic_targets[indices_to_modify]
+                                           ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'int' and 'str'
+

@@ -1,0 +1,124 @@
+{
+  "processor_type": "AdvancedDataProcessor",
+  "processing_config": {
+    "tfidf_max_features": 300,
+    "pca_components": 100,
+    "kmeans_clusters": 15,
+    "rolling_windows": [
+      7,
+      30,
+      90
+    ],
+    "text_analysis": true,
+    "feature_selection": true,
+    "handle_outliers": true,
+    "create_odds_features": true,
+    "create_temporal_features": true,
+    "create_market_features": true,
+    "outlier_threshold": 1.5,
+    "min_market_occurrences": 10,
+    "correlation_threshold": 0.95,
+    "feature_importance_threshold": 0.001,
+    "use_feast": false,
+    "feast_repo_path": "./feature_repo",
+    "online_store_enabled": true,
+    "n_jobs": -1,
+    "random_state": 42
+  },
+  "feature_summary": {
+    "data_overview": {
+      "users": 3413,
+      "events": 50000,
+      "markets": 29626,
+      "outcomes": 29626,
+      "bets": 41406,
+      "hierarchical_entries": 193
+    },
+    "feature_matrices": {
+      "user_item_matrix_shape": [
+        12,
+        46
+      ],
+      "event_features_shape": [
+        50000,
+        305
+      ],
+      "user_behavioral_features": 0,
+      "market_outcome_features": 21823890
+    },
+    "processing_artifacts": {
+      "encoders_count": 10,
+      "scalers_available": [
+        "standard",
+        "minmax",
+        "robust"
+      ],
+      "feature_groups": {
+        "final_training": [
+          "age",
+          "total_deposits",
+          "vip_status",
+          "days_since_registration",
+          "sport",
+          "competition",
+          "days_until_event",
+          "hours_until_event",
+          "hours_until_event",
+          "days_since_registration",
+          "event_day_of_week",
+          "event_hour",
+          "is_weekend_event",
+          "event_hour_sin",
+          "event_hour_cos",
+          "event_month_sin",
+          "event_month_cos",
+          "bet_hour",
+          "bet_day_of_week",
+          "is_bet_weekend",
+          "bet_timing_hours_before",
+          "bet_amount",
+          "odds_used",
+          "is_live_bet",
+          "bet_timing_hours_before",
+          "market_type_encoded",
+          "outcome_type_encoded",
+          "market_popularity",
+          "bet_ratio",
+          "implied_probability",
+          "odds_log",
+          "experience_ratio"
+        ]
+      }
+    },
+    "configuration": {
+      "tfidf_max_features": 300,
+      "pca_components": 100,
+      "kmeans_clusters": 15,
+      "rolling_windows": [
+        7,
+        30,
+        90
+      ],
+      "text_analysis": true,
+      "feature_selection": true,
+      "handle_outliers": true,
+      "create_odds_features": true,
+      "create_temporal_features": true,
+      "create_market_features": true,
+      "outlier_threshold": 1.5,
+      "min_market_occurrences": 10,
+      "correlation_threshold": 0.95,
+      "feature_importance_threshold": 0.001,
+      "use_feast": false,
+      "feast_repo_path": "./feature_repo",
+      "online_store_enabled": true,
+      "n_jobs": -1,
+      "random_state": 42
+    },
+    "feast_integration": {
+      "enabled": false,
+      "store_configured": false
+    }
+  },
+  "timestamp": "2025-06-24T11:30:48.036129"
+}

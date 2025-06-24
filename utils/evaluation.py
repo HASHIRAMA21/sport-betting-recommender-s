@@ -279,23 +279,3 @@ class ModelEvaluator:
             self.logger.error(f"Erreur dans compare_models: {e}")
             return pd.DataFrame()
 
-
-# !/usr/bin/env python3
-"""
-Script principal pour lancer l'entraînement des modèles de recommandation.
-
-Usage:
-    python scripts/train_models.py
-    python scripts/train_models.py --config config.json
-    python scripts/train_models.py --models collaborative_filtering content_based
-    python scripts/train_models.py --output-dir /path/to/output
-"""
-
-import sys
-import os
-
-# Ajouter le répertoire parent au path pour les imports
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-if __name__ == "__main__":
-    main()

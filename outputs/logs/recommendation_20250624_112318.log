@@ -1,0 +1,51 @@
+2025-06-24 11:23:18,830 - SportsRecommendation - INFO - Démarrage du pipeline d'entraînement complet
+2025-06-24 11:23:19,518 - SportsRecommendation - INFO -  MLflow configuré avec succès
+2025-06-24 11:23:19,518 - SportsRecommendation - INFO - Chargement des données...
+2025-06-24 11:23:21,087 - SportsRecommendation - INFO - Connexion à la base de données établie
+2025-06-24 11:23:21,087 - SportsRecommendation - INFO - === CHARGEMENT COMPLET DES DONNÉES ===
+2025-06-24 11:23:21,087 - SportsRecommendation - INFO - === DIAGNOSTIC DES DONNÉES DE PARIS ===
+2025-06-24 11:23:27,753 - SportsRecommendation - INFO - === RÉSULTATS DU DIAGNOSTIC ===
+2025-06-24 11:23:27,753 - SportsRecommendation - INFO - bets: {'total_rows': 154971, 'valid_bet_amounts': 154971, 'valid_user_ids': 154971, 'valid_event_ids': 154971, 'valid_outcome_ids': 0, 'oldest_bet': Timestamp('2023-02-06 17:17:17'), 'newest_bet': Timestamp('2025-04-11 17:55:19'), 'unique_users': 2283, 'unique_events': 1994}
+2025-06-24 11:23:27,754 - SportsRecommendation - INFO - recent_activity: [{'bet_date': datetime.date(2025, 4, 11), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 24), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 21), 'daily_bets': 13}, {'bet_date': datetime.date(2025, 3, 20), 'daily_bets': 4}, {'bet_date': datetime.date(2025, 3, 18), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 13), 'daily_bets': 3}, {'bet_date': datetime.date(2025, 3, 11), 'daily_bets': 1}, {'bet_date': datetime.date(2025, 3, 10), 'daily_bets': 3}, {'bet_date': datetime.date(2025, 3, 5), 'daily_bets': 2}, {'bet_date': datetime.date(2025, 3, 4), 'daily_bets': 9}]
+2025-06-24 11:23:27,754 - SportsRecommendation - INFO - users: 3413
+2025-06-24 11:23:27,754 - SportsRecommendation - INFO - events: 1368324
+2025-06-24 11:23:27,754 - SportsRecommendation - INFO - markets: 29626
+2025-06-24 11:23:27,754 - SportsRecommendation - INFO - joins: {'total_bets': 154971}
+2025-06-24 11:23:27,754 - SportsRecommendation - INFO - Chargement des données utilisateurs...
+2025-06-24 11:23:28,971 - SportsRecommendation - INFO - Utilisateurs chargés: 3413 enregistrements
+2025-06-24 11:23:28,971 - SportsRecommendation - INFO - Chargement des événements (120 derniers jours)...
+2025-06-24 11:23:36,403 - SportsRecommendation - INFO - Événements chargés: 50000 enregistrements
+2025-06-24 11:23:37,935 - SportsRecommendation - INFO - Marchés chargés: 29626 enregistrements
+2025-06-24 11:23:39,068 - SportsRecommendation - INFO - Outcomes chargés: 29626 enregistrements
+2025-06-24 11:23:42,452 - SportsRecommendation - INFO - Paris chargés: 41406 lignes
+2025-06-24 11:23:44,132 - SportsRecommendation - INFO - Historique cotes chargé: 29626 enregistrements
+2025-06-24 11:23:44,133 - SportsRecommendation - INFO - === RÉSUMÉ DU CHARGEMENT ===
+2025-06-24 11:23:44,133 - SportsRecommendation - INFO - users: 3413 enregistrements
+2025-06-24 11:23:44,133 - SportsRecommendation - INFO - events: 50000 enregistrements
+2025-06-24 11:23:44,133 - SportsRecommendation - INFO - markets: 29626 enregistrements
+2025-06-24 11:23:44,133 - SportsRecommendation - INFO - outcomes: 29626 enregistrements
+2025-06-24 11:23:44,134 - SportsRecommendation - INFO - bets: 41406 enregistrements
+2025-06-24 11:23:44,134 - SportsRecommendation - INFO - odds_history: 29626 enregistrements
+2025-06-24 11:23:44,134 - SportsRecommendation - INFO -  Données chargées avec succès
+2025-06-24 11:23:44,135 - SportsRecommendation - INFO - Résumé des données:
+2025-06-24 11:23:44,135 - SportsRecommendation - INFO -   - users: 3,413 enregistrements
+2025-06-24 11:23:44,135 - SportsRecommendation - INFO -   - events: 50,000 enregistrements
+2025-06-24 11:23:44,135 - SportsRecommendation - INFO -   - markets: 29,626 enregistrements
+2025-06-24 11:23:44,135 - SportsRecommendation - INFO -   - outcomes: 29,626 enregistrements
+2025-06-24 11:23:44,135 - SportsRecommendation - INFO -   - bets: 41,406 enregistrements
+2025-06-24 11:23:44,135 - SportsRecommendation - INFO -   - odds_history: 29,626 enregistrements
+2025-06-24 11:23:44,284 - SportsRecommendation - INFO - Connexion DB fermée
+2025-06-24 11:23:44,285 - SportsRecommendation - INFO - Préprocessing des données...
+2025-06-24 11:24:34,802 - SportsRecommendation - ERROR - Erreur lors du préprocessing: 'numpy.ndarray' object has no attribute 'values'
+2025-06-24 11:24:34,806 - SportsRecommendation - ERROR - ÉCHEC DU PIPELINE: 'numpy.ndarray' object has no attribute 'values'
+2025-06-24 11:24:34,830 - SportsRecommendation - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 797, in run_full_pipeline
+    self.preprocess_data()
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 194, in preprocess_data
+    X, y, feature_names = self.data_processor.prepare_comprehensive_training_data(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/data/advanced_processor.py", line 1446, in prepare_comprehensive_training_data
+    return X_scaled, y.values, final_features
+                     ^^^^^^^^
+AttributeError: 'numpy.ndarray' object has no attribute 'values'
+

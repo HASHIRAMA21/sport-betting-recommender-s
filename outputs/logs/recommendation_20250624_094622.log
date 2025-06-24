@@ -1,0 +1,35 @@
+2025-06-24 09:46:22,756 - SportsRecommendation - INFO - Démarrage du pipeline d'entraînement complet
+2025-06-24 09:46:23,622 - SportsRecommendation - INFO -  MLflow configuré avec succès
+2025-06-24 09:46:23,622 - SportsRecommendation - INFO - Chargement des données...
+2025-06-24 09:47:53,552 - SportsRecommendation - ERROR - Erreur connexion DB: 2026 (HY000): connecting to destination failed with TLS error: error:0A00010B:SSL routines::wrong version number
+2025-06-24 09:47:53,552 - SportsRecommendation - ERROR - Erreur lors du chargement des données: 2026 (HY000): connecting to destination failed with TLS error: error:0A00010B:SSL routines::wrong version number
+2025-06-24 09:47:53,553 - SportsRecommendation - ERROR - ÉCHEC DU PIPELINE: 2026 (HY000): connecting to destination failed with TLS error: error:0A00010B:SSL routines::wrong version number
+2025-06-24 09:47:53,566 - SportsRecommendation - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 663, in run_full_pipeline
+    self.load_data()
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 106, in load_data
+    self.db_connector.connect()
+  File "/Users/krohn/PycharmProjects/betting_recommender/data/database_connector.py", line 31, in connect
+    self.connection = mysql.connector.connect(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/mysql/connector/pooling.py", line 323, in connect
+    return MySQLConnection(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/mysql/connector/connection.py", line 185, in __init__
+    self.connect(**kwargs)
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/mysql/connector/abstracts.py", line 1605, in connect
+    self._open_connection()
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/mysql/connector/connection.py", line 411, in _open_connection
+    raise err
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/mysql/connector/connection.py", line 388, in _open_connection
+    self._do_auth(
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/mysql/connector/connection.py", line 320, in _do_auth
+    ok_pkt = self._authenticator.authenticate(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/mysql/connector/authentication.py", line 381, in authenticate
+    ok_pkt = self._handle_server_response(sock, pkt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/.venv/lib/python3.11/site-packages/mysql/connector/authentication.py", line 287, in _handle_server_response
+    raise get_exception(pkt)
+mysql.connector.errors.InterfaceError: 2026 (HY000): connecting to destination failed with TLS error: error:0A00010B:SSL routines::wrong version number
+

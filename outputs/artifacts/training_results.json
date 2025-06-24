@@ -1,0 +1,17 @@
+{
+  "collaborative_filtering": {
+    "error": "'<' not supported between instances of 'str' and 'float'"
+  },
+  "content_based": {
+    "error": "tuple index out of range"
+  },
+  "contextual_catboost": {
+    "error": "Unable to locate credentials"
+  },
+  "contextual_bandit": {
+    "error": "Unable to locate credentials"
+  },
+  "reinforcement_learning": {
+    "error": "Unable to locate credentials"
+  }
+}

@@ -1,0 +1,42 @@
+2025-06-23 16:31:32,393 - SportsRecommendation - INFO - Démarrage du pipeline d'entraînement complet
+2025-06-23 16:31:35,374 - SportsRecommendation - INFO -  MLflow configuré avec succès
+2025-06-23 16:31:35,374 - SportsRecommendation - INFO - Chargement des données...
+2025-06-23 16:31:36,895 - SportsRecommendation - INFO - Connexion à la base de données établie
+2025-06-23 16:31:36,895 - SportsRecommendation - INFO - === CHARGEMENT COMPLET DES DONNÉES ===
+2025-06-23 16:31:36,895 - SportsRecommendation - INFO - Chargement des données utilisateurs...
+2025-06-23 16:31:40,865 - SportsRecommendation - INFO - Utilisateurs chargés: 3413 enregistrements
+2025-06-23 16:31:40,865 - SportsRecommendation - INFO - Chargement des événements (120 derniers jours)...
+2025-06-23 16:31:42,438 - SportsRecommendation - INFO - Événements chargés: 1000 enregistrements
+2025-06-23 16:31:43,298 - SportsRecommendation - INFO - Marchés chargés: 1000 enregistrements
+2025-06-23 16:31:44,154 - SportsRecommendation - INFO - Outcomes chargés: 1000 enregistrements
+2025-06-23 16:31:45,821 - SportsRecommendation - INFO - Paris chargés: 1000 lignes
+2025-06-23 16:31:47,401 - SportsRecommendation - INFO - Historique cotes chargé: 1000 enregistrements
+2025-06-23 16:31:47,401 - SportsRecommendation - INFO - === RÉSUMÉ DU CHARGEMENT ===
+2025-06-23 16:31:47,401 - SportsRecommendation - INFO - users: 3413 enregistrements
+2025-06-23 16:31:47,401 - SportsRecommendation - INFO - events: 1000 enregistrements
+2025-06-23 16:31:47,402 - SportsRecommendation - INFO - markets: 1000 enregistrements
+2025-06-23 16:31:47,402 - SportsRecommendation - INFO - outcomes: 1000 enregistrements
+2025-06-23 16:31:47,402 - SportsRecommendation - INFO - bets: 1000 enregistrements
+2025-06-23 16:31:47,402 - SportsRecommendation - INFO - odds_history: 1000 enregistrements
+2025-06-23 16:31:47,408 - SportsRecommendation - INFO -  Données chargées avec succès
+2025-06-23 16:31:47,408 - SportsRecommendation - INFO - Résumé des données:
+2025-06-23 16:31:47,408 - SportsRecommendation - INFO -   - users: 3,413 enregistrements
+2025-06-23 16:31:47,408 - SportsRecommendation - INFO -   - events: 1,000 enregistrements
+2025-06-23 16:31:47,408 - SportsRecommendation - INFO -   - markets: 1,000 enregistrements
+2025-06-23 16:31:47,408 - SportsRecommendation - INFO -   - outcomes: 1,000 enregistrements
+2025-06-23 16:31:47,409 - SportsRecommendation - INFO -   - bets: 1,000 enregistrements
+2025-06-23 16:31:47,409 - SportsRecommendation - INFO -   - odds_history: 1,000 enregistrements
+2025-06-23 16:31:47,567 - SportsRecommendation - INFO - Connexion DB fermée
+2025-06-23 16:31:47,567 - SportsRecommendation - INFO - Préprocessing des données...
+2025-06-23 16:31:47,909 - SportsRecommendation - ERROR - Erreur lors du préprocessing: Aucune donnée d'entraînement disponible après filtrage
+2025-06-23 16:31:47,909 - SportsRecommendation - ERROR - ÉCHEC DU PIPELINE: Aucune donnée d'entraînement disponible après filtrage
+2025-06-23 16:31:47,912 - SportsRecommendation - ERROR - Traceback: Traceback (most recent call last):
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 661, in run_full_pipeline
+    self.preprocess_data()
+  File "/Users/krohn/PycharmProjects/betting_recommender/models/train.py", line 192, in preprocess_data
+    X, y, feature_names = self.data_processor.prepare_comprehensive_training_data(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/krohn/PycharmProjects/betting_recommender/data/advanced_processor.py", line 1243, in prepare_comprehensive_training_data
+    raise ValueError("Aucune donnée d'entraînement disponible après filtrage")
+ValueError: Aucune donnée d'entraînement disponible après filtrage
+

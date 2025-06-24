@@ -50,6 +50,10 @@ class BaseRecommender(ABC):
 
     def save(self, path: str):
         """Sauvegarde le modèle."""
+        # Créer le répertoire si nécessaire
+        import os
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+
         model_data = {
             'model': self.model,
             'config': self.config,
@@ -93,7 +97,14 @@ class CollaborativeFilteringRecommender(BaseRecommender):
         # Extraction des données
         user_ids = train_data['user_ids']
         item_ids = train_data['item_ids']
-        ratings = train_data['ratings']
+        ratings = []
+        for r in train_data['ratings']:
+            try:
+                # Ensure r is a float to avoid string-float comparison issues
+                ratings.append(float(r))
+            except (ValueError, TypeError):
+                ratings.append(0.0)
+        ratings = np.array(ratings)
 
         # Création des mappings
         unique_users = np.unique(user_ids)
@@ -194,7 +205,10 @@ class CollaborativeFilteringRecommender(BaseRecommender):
             if uid in self.user_mapping and iid in self.item_mapping:
                 val_user_indices.append(self.user_mapping[uid])
                 val_item_indices.append(self.item_mapping[iid])
-                val_ratings_filtered.append(rating)
+                try:
+                    val_ratings_filtered.append(float(rating))
+                except (ValueError, TypeError):
+                    val_ratings_filtered.append(0.0)
 
         if not val_user_indices:
             return float('inf')
@@ -328,11 +342,19 @@ class ContentBasedRecommender(BaseRecommender):
         start_time = time.time()
 
         # Extraction des features
-        self.item_features = train_data['item_features']  # DataFrame des features d'items
+        self.item_features = train_data['item_features']  # DataFrame des features d'items ou matrice sparse
         user_item_interactions = train_data['interactions']  # DataFrame user_id, item_id, rating
 
         # Normalisation des features
-        item_feature_matrix = self.scaler.fit_transform(self.item_features.select_dtypes(include=[np.number]))
+        if isinstance(self.item_features, pd.DataFrame):
+            # Si c'est un DataFrame, utiliser select_dtypes
+            item_feature_matrix = self.scaler.fit_transform(self.item_features.select_dtypes(include=[np.number]))
+        elif isinstance(self.item_features, csr_matrix):
+            # Si c'est une matrice sparse, la convertir en array dense pour la normalisation
+            item_feature_matrix = self.scaler.fit_transform(self.item_features.toarray())
+        else:
+            # Autre cas (numpy array, etc.)
+            item_feature_matrix = self.scaler.fit_transform(self.item_features)
 
         # Construction des profils utilisateurs
         user_profiles = self._build_user_profiles(user_item_interactions, item_feature_matrix)
@@ -408,9 +430,14 @@ class ContentBasedRecommender(BaseRecommender):
                 item_idx = row['item_id']  # Suppose que item_id correspond à l'index
                 rating = row['rating']
 
-                if item_idx < len(item_features):
-                    weighted_features += rating * item_features[item_idx]
-                    total_weight += rating
+                try:
+                    item_idx = int(item_idx)
+                    rating = float(rating)
+                    if item_idx < len(item_features):
+                        weighted_features += rating * item_features[item_idx]
+                        total_weight += rating
+                except (ValueError, TypeError):
+                    continue
 
             if total_weight > 0:
                 user_profiles[user_id] = weighted_features / total_weight
@@ -430,14 +457,19 @@ class ContentBasedRecommender(BaseRecommender):
             item_id = row['item_id']
             rating = row['rating']
 
-            if user_id in user_profiles and item_id < len(item_features):
-                # Concaténation du profil utilisateur et des features de l'item
-                user_profile = user_profiles[user_id]
-                item_feature = item_features[item_id]
+            try:
+                item_id = int(item_id)
+                rating = float(rating)
+                if user_id in user_profiles and item_id < len(item_features):
+                    # Concaténation du profil utilisateur et des features de l'item
+                    user_profile = user_profiles[user_id]
+                    item_feature = item_features[item_id]
 
-                combined_features = np.concatenate([user_profile, item_feature])
-                X.append(combined_features)
-                y.append(rating)
+                    combined_features = np.concatenate([user_profile, item_feature])
+                    X.append(combined_features)
+                    y.append(rating)
+            except (ValueError, TypeError):
+                continue
 
         return np.array(X), np.array(y)
 
@@ -453,17 +485,33 @@ class ContentBasedRecommender(BaseRecommender):
 
         with torch.no_grad():
             for user_id, item_id in zip(user_ids, item_ids):
-                if user_id in self.user_profiles and item_id < len(self.item_features):
-                    user_profile = self.user_profiles[user_id]
-                    item_feature = self.scaler.transform([self.item_features.iloc[item_id].values])[0]
+                try:
+                    item_id = int(item_id)
+                    if user_id in self.user_profiles and item_id < len(self.item_features):
+                        user_profile = self.user_profiles[user_id]
 
-                    combined_features = np.concatenate([user_profile, item_feature])
-                    features_tensor = torch.FloatTensor(combined_features).unsqueeze(0).to(device)
+                        # Handle different types of item_features
+                        if isinstance(self.item_features, pd.DataFrame):
+                            item_feature = self.scaler.transform([self.item_features.iloc[item_id].values])[0]
+                        elif isinstance(self.item_features, csr_matrix):
+                            item_feature = self.scaler.transform([self.item_features[item_id].toarray()[0]])[0]
+                        elif isinstance(self.item_features, np.ndarray):
+                            item_feature = self.scaler.transform([self.item_features[item_id]])[0]
+                        else:
+                            # Fallback for unknown type
+                            predictions.append(0.0)
+                            continue
 
-                    prediction = self.model(features_tensor).item()
-                    predictions.append(prediction)
-                else:
-                    predictions.append(0.0)  # Fallback
+                        combined_features = np.concatenate([user_profile, item_feature])
+                        features_tensor = torch.FloatTensor(combined_features).unsqueeze(0).to(device)
+
+                        prediction = self.model(features_tensor).item()
+                        predictions.append(prediction)
+                    else:
+                        predictions.append(0.0)  # Fallback
+                except (ValueError, TypeError, IndexError) as e:
+                    logger.debug(f"Error in predict: {e}")
+                    predictions.append(0.0)  # Fallback for errors
 
         return np.array(predictions)
 
@@ -481,12 +529,26 @@ class ContentBasedRecommender(BaseRecommender):
 
         with torch.no_grad():
             for item_id in range(len(self.item_features)):
-                item_feature = self.scaler.transform([self.item_features.iloc[item_id].values])[0]
-                combined_features = np.concatenate([user_profile, item_feature])
-                features_tensor = torch.FloatTensor(combined_features).unsqueeze(0).to(device)
+                try:
+                    # Handle different types of item_features
+                    if isinstance(self.item_features, pd.DataFrame):
+                        item_feature = self.scaler.transform([self.item_features.iloc[item_id].values])[0]
+                    elif isinstance(self.item_features, csr_matrix):
+                        item_feature = self.scaler.transform([self.item_features[item_id].toarray()[0]])[0]
+                    elif isinstance(self.item_features, np.ndarray):
+                        item_feature = self.scaler.transform([self.item_features[item_id]])[0]
+                    else:
+                        # Skip unknown types
+                        continue
 
-                score = self.model(features_tensor).item()
-                scores.append((item_id, score))
+                    combined_features = np.concatenate([user_profile, item_feature])
+                    features_tensor = torch.FloatTensor(combined_features).unsqueeze(0).to(device)
+
+                    score = self.model(features_tensor).item()
+                    scores.append((item_id, score))
+                except (ValueError, TypeError, IndexError) as e:
+                    logger.debug(f"Error in recommend for item {item_id}: {e}")
+                    continue
 
         # Tri et sélection du top-N
         scores.sort(key=lambda x: x[1], reverse=True)
@@ -672,8 +734,60 @@ class ContextualCatBoostRecommender(BaseRecommender):
         X_train = train_data['features']  # DataFrame avec features contextuelles
         y_train = train_data['targets']  # Array des targets
 
+        # Vérifier que X_train est bien un DataFrame
+        if not isinstance(X_train, pd.DataFrame):
+            # Convertir en DataFrame si ce n'est pas déjà le cas
+            if hasattr(X_train, 'toarray'):  # Pour les matrices sparse
+                X_train = pd.DataFrame(X_train.toarray())
+            else:
+                X_train = pd.DataFrame(X_train)
+            # Mettre à jour les données d'entraînement
+            train_data['features'] = X_train
+
+        # Fonction pour gérer les noms de colonnes dupliqués
+        def handle_duplicate_columns(df):
+            duplicate_cols = df.columns[df.columns.duplicated()].tolist()
+            if duplicate_cols:
+                logger.warning(f"Colonnes dupliquées détectées: {duplicate_cols}")
+                # Renommer les colonnes dupliquées
+                for col in duplicate_cols:
+                    dup_indices = [i for i, c in enumerate(df.columns) if c == col]
+                    for i, idx in enumerate(dup_indices[1:], 1):  # Skip the first occurrence
+                        new_col_name = f"{col}_{i}"
+                        df.columns.values[idx] = new_col_name
+                        logger.info(f"Colonne renommée: {col} -> {new_col_name}")
+            return df
+
+        # Gérer les noms de colonnes dupliqués dans les données d'entraînement
+        X_train = handle_duplicate_columns(X_train)
+        train_data['features'] = X_train
+
+        # Gérer les noms de colonnes dupliqués dans les données de validation si présentes
+        if val_data is not None and 'features' in val_data:
+            X_val = val_data['features']
+            if isinstance(X_val, pd.DataFrame):
+                X_val = handle_duplicate_columns(X_val)
+                # S'assurer que les colonnes de validation correspondent à celles d'entraînement
+                if set(X_val.columns) != set(X_train.columns):
+                    logger.warning("Les colonnes de validation ne correspondent pas aux colonnes d'entraînement")
+                    # Ajouter les colonnes manquantes avec des valeurs par défaut
+                    for col in X_train.columns:
+                        if col not in X_val.columns:
+                            X_val[col] = 0
+                    # Réordonner les colonnes pour correspondre à X_train
+                    X_val = X_val[X_train.columns]
+                val_data['features'] = X_val
+
         # Identification des features catégorielles
-        self.categorical_features = [col for col in X_train.columns if X_train[col].dtype == 'object']
+        self.categorical_features = []
+        for col in X_train.columns:
+            try:
+                if pd.api.types.is_object_dtype(X_train[col]):
+                    self.categorical_features.append(col)
+            except:
+                # En cas d'erreur, ignorer cette colonne
+                pass
+
         self.feature_columns = X_train.columns.tolist()
 
         # Préparation des données de validation
