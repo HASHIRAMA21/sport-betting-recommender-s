@@ -117,7 +117,12 @@ class ModelEvaluator:
             for user_id, item_id, rating in zip(test_data['user_ids'], test_data['item_ids'], test_data['ratings']):
                 if user_id not in user_items_map:
                     user_items_map[user_id] = []
-                user_items_map[user_id].append((item_id, rating))
+                # Ensure rating is a float
+                try:
+                    float_rating = float(rating)
+                except (ValueError, TypeError):
+                    float_rating = 0.0
+                user_items_map[user_id].append((item_id, float_rating))
 
             # Calcul des métriques pour différents K
             k_values = [5, 10, 20]
@@ -278,24 +283,3 @@ class ModelEvaluator:
         except Exception as e:
             self.logger.error(f"Erreur dans compare_models: {e}")
             return pd.DataFrame()
-
-
-# !/usr/bin/env python3
-"""
-Script principal pour lancer l'entraînement des modèles de recommandation.
-
-Usage:
-    python scripts/train_models.py
-    python scripts/train_models.py --config config.json
-    python scripts/train_models.py --models collaborative_filtering content_based
-    python scripts/train_models.py --output-dir /path/to/output
-"""
-
-import sys
-import os
-
-# Ajouter le répertoire parent au path pour les imports
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-if __name__ == "__main__":
-    main()

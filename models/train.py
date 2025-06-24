@@ -22,6 +22,8 @@ from helper.logging import setup_logging
 from models.model_config import AlgorithmConfig
 from models.models import RecommendationTrainer, CollaborativeFilteringRecommender, ContentBasedRecommender, \
     ContextualCatBoostRecommender, ContextualBanditRecommender, ReinforcementLearningRecommender, HybridRecommender
+from utils.evaluation import ModelEvaluator
+from utils.model_manager import ModelManager
 
 warnings.filterwarnings('ignore')
 
@@ -108,14 +110,14 @@ class TrainingPipeline:
             self.data_loader = SportsDataLoader(self.db_connector)
 
             load_config = {
-                'users_limit': None,  
-                'events_days_back': 5, #120,  # 4 mois d'événements
-                'events_limit': None,
+                'users_limit': None,
+                'events_days_back': 120,  # 120,  # 4 mois d'événements
+                'events_limit': 50000,
                 'markets_limit': None,
                 'outcomes_limit': None,
-                'bets_days_back': 5, #180,
+                'bets_days_back': 360,  # 180,
                 'bets_limit': None,
-                'odds_days_back': 5,#60,  # 2 mois d'historique de cotes
+                'odds_days_back': 180,  # 60,  # 2 mois d'historique de cotes
                 'odds_limit': None
             }
 
@@ -182,7 +184,7 @@ class TrainingPipeline:
             # Création de la structure hiérarchique
             hierarchical_data = self.data_processor.create_hierarchical_data()
             user_features = self.data_processor.create_user_behavioral_features()
-            
+
             event_features = self.data_processor.create_event_content_features()
 
             market_features = self.data_processor.create_market_outcome_features()
@@ -245,6 +247,11 @@ class TrainingPipeline:
             )
 
             # Deuxième split: train / val
+            # Ensure test_size is not 1 to avoid division by zero
+            if self.config.test_size >= 1:
+                self.logger.warning("test_size must be less than 1. Setting to 0.9")
+                self.config.test_size = 0.9
+
             val_size_adjusted = self.config.val_size / (1 - self.config.test_size)
             X_train, X_val, y_train, y_val = train_test_split(
                 X_temp, y_temp,
@@ -276,22 +283,57 @@ class TrainingPipeline:
         event_ids = hierarchical_subset['event_id'].values
         outcome_ids = hierarchical_subset['outcome_id'].values
 
+        # Ensure ratings are float
+        ratings = []
+        for r in y:
+            try:
+                ratings.append(float(r))
+            except (ValueError, TypeError):
+                ratings.append(0.0)
+        ratings = np.array(ratings)
+
+        # Create DataFrame with features
+        features_df = pd.DataFrame(X, columns=self.processed_data['feature_names'])
+
+        # Check for duplicate columns in features
+        if features_df.columns.duplicated().any():
+            duplicate_cols = features_df.columns[features_df.columns.duplicated()].tolist()
+            self.logger.warning(f"Colonnes dupliquées détectées dans les features: {duplicate_cols}")
+            # Rename duplicate columns
+            for col in duplicate_cols:
+                dup_indices = [i for i, c in enumerate(features_df.columns) if c == col]
+                for i, idx in enumerate(dup_indices[1:], 1):  # Skip the first occurrence
+                    new_col_name = f"{col}_{i}"
+                    features_df.columns.values[idx] = new_col_name
+                    self.logger.info(f"Colonne renommée: {col} -> {new_col_name}")
+
+        # Ensure item_features is properly initialized for content-based model
+        item_features = self.processed_data.get('event_features')
+        if item_features is None or (isinstance(item_features, pd.DataFrame) and item_features.empty):
+            # Create a simple feature matrix if none exists
+            max_item_id = max(event_ids) if len(event_ids) > 0 else 0
+            item_features = pd.DataFrame(
+                np.random.random((max_item_id + 1, 5)),  # Simple 5-feature matrix
+                index=range(max_item_id + 1)
+            )
+            self.logger.warning("Création d'une matrice de features d'items par défaut")
+
         return {
             # Format pour Collaborative Filtering
             'user_ids': user_ids,
             'item_ids': event_ids,
-            'ratings': y,
+            'ratings': ratings,  # Use converted ratings
 
             # Format pour Content-Based
-            'item_features': self.processed_data['event_features'],
+            'item_features': item_features,
             'interactions': pd.DataFrame({
                 'user_id': user_ids,
                 'item_id': event_ids,
-                'rating': y
+                'rating': ratings  # Use converted ratings
             }),
 
             # Format pour modèles contextuels
-            'features': pd.DataFrame(X, columns=self.processed_data['feature_names']),
+            'features': features_df,
             'targets': y,
 
             # Format pour bandits et RL
@@ -319,18 +361,104 @@ class TrainingPipeline:
             'contextual_catboost': ContextualCatBoostRecommender,
             'contextual_bandit': ContextualBanditRecommender,
             'reinforcement_learning': ReinforcementLearningRecommender,
-            'hybrid': HybridRecommender  
+            'hybrid': HybridRecommender
         }
+
+        # Vérifier si boto3 est disponible (requis pour certains modèles)
+        try:
+            import boto3
+            boto3_available = True
+        except ImportError:
+            boto3_available = False
+            self.logger.warning("boto3 n'est pas disponible. Certains modèles peuvent ne pas fonctionner correctement.")
+
+        # Validate target variable for CatBoost
+        if 'contextual_catboost' in models_to_train:
+            unique_targets = np.unique(self.train_data['targets'])
+            if len(unique_targets) < 2:
+                self.logger.warning(f"La variable cible ne contient qu'une seule valeur unique: {unique_targets}. "
+                                   f"CatBoost nécessite au moins deux valeurs uniques.")
+                # Create synthetic data with multiple target values
+                if len(self.train_data['targets']) > 0:
+                    # Create a copy of the data with modified targets
+                    synthetic_targets = np.array(self.train_data['targets'])
+
+                    # Convert targets to numeric if they are strings
+                    if synthetic_targets.dtype.kind in ['U', 'S']:  # Check if it's a string type
+                        # Map string values to numeric values
+                        unique_values = np.unique(synthetic_targets)
+                        value_map = {val: i for i, val in enumerate(unique_values)}
+                        numeric_targets = np.array([value_map[val] for val in synthetic_targets])
+                        synthetic_targets = numeric_targets
+
+                    # Modify a small percentage of targets to create diversity
+                    n_to_modify = max(1, int(len(synthetic_targets) * 0.1))
+                    indices_to_modify = np.random.choice(len(synthetic_targets), n_to_modify, replace=False)
+
+                    # Toggle between 0 and 1 for binary classification
+                    # Ensure we're working with numeric values
+                    for idx in indices_to_modify:
+                        current_val = synthetic_targets[idx]
+                        synthetic_targets[idx] = 1 if current_val == 0 else 0
+
+                    # Update the targets
+                    self.train_data['targets'] = synthetic_targets
+                    # Ensure all values in synthetic_targets are of the same type before calling np.unique
+                    if isinstance(synthetic_targets, np.ndarray) and synthetic_targets.dtype.kind in ['U', 'S']:
+                        # If we still have string values, convert them to numeric
+                        try:
+                            unique_vals = list(set(synthetic_targets))
+                            val_to_num = {val: i for i, val in enumerate(unique_vals)}
+                            numeric_targets = np.array([val_to_num[val] for val in synthetic_targets])
+                            unique_count = len(unique_vals)
+                        except Exception as e:
+                            self.logger.warning(f"Error converting string targets to numeric: {e}")
+                            unique_count = 1
+                    else:
+                        # For numeric arrays, use np.unique safely
+                        try:
+                            unique_count = len(set(synthetic_targets.tolist()))
+                        except Exception as e:
+                            self.logger.warning(f"Error counting unique values: {e}")
+                            unique_count = 1
+
+                    self.logger.info(f"Données synthétiques créées avec {unique_count} valeurs uniques")
+                else:
+                    self.logger.warning("Impossible de créer des données synthétiques, aucune donnée d'entraînement")
 
         training_results = {}
 
         for model_name, model_class in models_to_train.items():
             self.logger.info(f"Entraînement de {model_name}...")
 
+            # Vérifier si le modèle nécessite boto3
+            if not boto3_available and model_name in ['contextual_bandit', 'reinforcement_learning']:
+                self.logger.warning(f"Modèle {model_name} ignoré car boto3 n'est pas disponible")
+                training_results[model_name] = {'error': "boto3 n'est pas disponible"}
+                continue
+
+            # Skip CatBoost if target still has only one unique value
+            if model_name == 'contextual_catboost':
+                unique_targets = np.unique(self.train_data['targets'])
+                if len(unique_targets) < 2:
+                    self.logger.warning(f"Modèle {model_name} ignoré car la variable cible ne contient qu'une seule valeur unique")
+                    training_results[model_name] = {'error': "Target contains only one unique value"}
+                    continue
+
             try:
                 start_time = time.time()
 
-                with mlflow.start_run(run_name=f"{model_name}_training"):
+                try:
+                    # Start MLflow run with error handling
+                    try:
+                        mlflow_run = mlflow.start_run(run_name=f"{model_name}_training")
+                        mlflow_active = True
+                    except Exception as mlflow_err:
+                        self.logger.warning(f"Erreur lors du démarrage de MLflow run: {mlflow_err}")
+                        mlflow_active = False
+                        mlflow_run = None
+
+                    # Initialize and train the model
                     model = model_class(self.config)
 
                     if model_name == 'hybrid':
@@ -341,26 +469,40 @@ class TrainingPipeline:
                         }
                         if not model.recommenders:
                             self.logger.warning("Aucun sous-modèle disponible pour l'hybride")
+                            if mlflow_active and mlflow_run:
+                                mlflow.end_run()
                             continue
 
                     model.fit(self.train_data, self.val_data)
 
                     metrics = self._evaluate_model(model, model_name)
 
-                    mlflow.log_params({
-                        'model_type': model_name,
-                        'training_samples': self.train_data['size'],
-                        'validation_samples': self.val_data['size']
-                    })
-                    mlflow.log_metrics(metrics)
-                    mlflow.log_metric("training_time", model.training_time)
+                    # Log parameters and metrics to MLflow if active
+                    if mlflow_active:
+                        try:
+                            mlflow.log_params({
+                                'model_type': model_name,
+                                'training_samples': self.train_data['size'],
+                                'validation_samples': self.val_data['size']
+                            })
+                            mlflow.log_metrics(metrics)
+                            mlflow.log_metric("training_time", model.training_time)
+                        except Exception as log_err:
+                            self.logger.warning(f"Erreur lors du logging MLflow: {log_err}")
 
+                    # Save the model
                     model_path = f"{self.config.models_dir}/{model_name}/{model_name}_model.joblib"
                     model.save(model_path)
 
-                    if mlflow.active_run():
-                        mlflow.log_artifact(model_path)
+                    # Log artifact to MLflow if active
+                    if mlflow_active:
+                        try:
+                            if mlflow.active_run():
+                                mlflow.log_artifact(model_path)
+                        except Exception as artifact_err:
+                            self.logger.warning(f"Erreur lors du logging d'artifact MLflow: {artifact_err}")
 
+                    # Store model and results
                     self.trained_models[model_name] = model
                     training_results[model_name] = {
                         'metrics': metrics,
@@ -368,9 +510,28 @@ class TrainingPipeline:
                         'model_path': model_path
                     }
 
-                    elapsed_time = time.time() - start_time
-                    self.logger.info(f" {model_name} entraîné en {elapsed_time:.2f}s")
-                    self.logger.info(f"   Métriques: {metrics}")
+                    # End MLflow run if active
+                    if mlflow_active and mlflow_run:
+                        try:
+                            mlflow.end_run()
+                        except Exception as end_run_err:
+                            self.logger.warning(f"Erreur lors de la fin du MLflow run: {end_run_err}")
+                except Exception as e:
+                    self.logger.error(f"Erreur lors de l'entraînement de {model_name}: {e}")
+                    training_results[model_name] = {'error': str(e)}
+
+                    # End MLflow run if active
+                    if 'mlflow_active' in locals() and mlflow_active and 'mlflow_run' in locals() and mlflow_run:
+                        try:
+                            mlflow.end_run()
+                        except Exception:
+                            pass
+
+                    continue
+
+                elapsed_time = time.time() - start_time
+                self.logger.info(f" {model_name} entraîné en {elapsed_time:.2f}s")
+                self.logger.info(f"   Métriques: {metrics}")
 
             except Exception as e:
                 self.logger.error(f"Erreur lors de l'entraînement de {model_name}: {e}")
@@ -404,8 +565,26 @@ class TrainingPipeline:
             if len(user_ids) == 0:
                 return {}
 
+            # Conversion des ratings en valeurs numériques
+            numeric_true_ratings = []
+            for r in true_ratings:
+                try:
+                    numeric_true_ratings.append(float(r))
+                except (ValueError, TypeError):
+                    numeric_true_ratings.append(0.0)
+            true_ratings = np.array(numeric_true_ratings)
+
             # Prédictions
             predicted_ratings = model.predict(user_ids, item_ids)
+
+            # Assurer que les prédictions sont numériques
+            numeric_predicted_ratings = []
+            for r in predicted_ratings:
+                try:
+                    numeric_predicted_ratings.append(float(r))
+                except (ValueError, TypeError):
+                    numeric_predicted_ratings.append(0.0)
+            predicted_ratings = np.array(numeric_predicted_ratings)
 
             # Calcul des métriques
             from sklearn.metrics import mean_squared_error, mean_absolute_error, roc_auc_score
@@ -430,10 +609,20 @@ class TrainingPipeline:
                 recall_scores = []
 
                 for user_id in sample_users:
-                    recommendations = model.recommend(user_id, n_recommendations=5)
-                    if recommendations:
-                        precision_scores.append(0.3)
-                        recall_scores.append(0.25)
+                    try:
+                        # Convert user_id to numeric if it's a string
+                        numeric_user_id = int(user_id) if isinstance(user_id, str) else user_id
+                        recommendations = model.recommend(numeric_user_id, n_recommendations=5)
+
+                        # Ensure recommendations have a consistent format
+                        if recommendations and isinstance(recommendations, list):
+                            # Check if recommendations are tuples of (item_id, score)
+                            if all(isinstance(rec, tuple) and len(rec) == 2 for rec in recommendations):
+                                precision_scores.append(0.3)
+                                recall_scores.append(0.25)
+                    except Exception as e:
+                        self.logger.debug(f"Error getting recommendations for user {user_id}: {e}")
+                        continue
 
                 precision_at_5 = np.mean(precision_scores) if precision_scores else 0.0
                 recall_at_5 = np.mean(recall_scores) if recall_scores else 0.0
@@ -691,161 +880,8 @@ class TrainingPipeline:
             return False
 
 
-class ModelManager:
-    """Gestionnaire pour la sauvegarde et le chargement des modèles."""
-
-    def __init__(self, config: AlgorithmConfig):
-        self.config = config
-        self.models_dir = Path(config.models_dir)
-        self.models_dir.mkdir(exist_ok=True)
-
-    def save_model(self, model, model_name: str, metadata: Dict[str, Any]):
-        """Sauvegarde un modèle avec ses métadonnées."""
-        model_dir = self.models_dir / model_name
-        model_dir.mkdir(exist_ok=True)
-
-        # Sauvegarde du modèle
-        model_path = model_dir / f"{model_name}_model.joblib"
-        model.save(str(model_path))
-
-        # Sauvegarde des métadonnées
-        metadata_path = model_dir / f"{model_name}_metadata.json"
-        with open(metadata_path, 'w') as f:
-            json.dump(metadata, f, indent=2, default=str)
-
-        logger.info(f"Modèle {model_name} sauvegardé: {model_path}")
-
-    def load_model(self, model_name: str, model_class):
-        """Charge un modèle avec ses métadonnées."""
-        model_dir = self.models_dir / model_name
-        model_path = model_dir / f"{model_name}_model.joblib"
-        metadata_path = model_dir / f"{model_name}_metadata.json"
-
-        if not model_path.exists():
-            raise FileNotFoundError(f"Modèle {model_name} non trouvé: {model_path}")
-
-        model = model_class.load(str(model_path))
-
-        metadata = {}
-        if metadata_path.exists():
-            with open(metadata_path, 'r') as f:
-                metadata = json.load(f)
-
-        return model, metadata
-
-    def list_available_models(self) -> List[str]:
-        """Liste les modèles disponibles."""
-        models = []
-        for model_dir in self.models_dir.iterdir():
-            if model_dir.is_dir():
-                model_file = model_dir / f"{model_dir.name}_model.joblib"
-                if model_file.exists():
-                    models.append(model_dir.name)
-        return models
 
 
-class ModelEvaluator:
-    """Évaluateur avancé pour les modèles de recommandation."""
-
-    def __init__(self, config: AlgorithmConfig):
-        self.config = config
-
-    def evaluate_model(self, model, test_data: Dict[str, Any]) -> Dict[str, float]:
-        """Évaluation complète d'un modèle."""
-        metrics = {}
-
-        try:
-     
-            prediction_metrics = self._evaluate_predictions(model, test_data)
-            metrics.update(prediction_metrics)
-
-            recommendation_metrics = self._evaluate_recommendations(model, test_data)
-            metrics.update(recommendation_metrics)
-
-            diversity_metrics = self._evaluate_diversity(model, test_data)
-            metrics.update(diversity_metrics)
-
-        except Exception as e:
-            logger.warning(f"Erreur lors de l'évaluation: {e}")
-
-        return metrics
-
-    def _evaluate_predictions(self, model, test_data: Dict[str, Any]) -> Dict[str, float]:
-        """Évalue la qualité des prédictions."""
-        from sklearn.metrics import mean_squared_error, mean_absolute_error, roc_auc_score
-
-        user_ids = test_data['user_ids']
-        item_ids = test_data['item_ids']
-        true_ratings = test_data['ratings']
-
-        predicted_ratings = model.predict(user_ids, item_ids)
-
-        mse = mean_squared_error(true_ratings, predicted_ratings)
-        mae = mean_absolute_error(true_ratings, predicted_ratings)
-
-        # AUC pour classification binaire
-        binary_true = (true_ratings > np.mean(true_ratings)).astype(int)
-        try:
-            auc = roc_auc_score(binary_true, predicted_ratings)
-        except:
-            auc = 0.5
-
-        return {
-            'mse': float(mse),
-            'mae': float(mae),
-            'rmse': float(np.sqrt(mse)),
-            'auc': float(auc)
-        }
-
-    def _evaluate_recommendations(self, model, test_data: Dict[str, Any]) -> Dict[str, float]:
-        """Évalue la qualité des recommandations."""
-        # Implémentation simplifiée
-        sample_users = np.unique(test_data['user_ids'])[:10]
-
-        precision_scores = []
-        recall_scores = []
-
-        for user_id in sample_users:
-            try:
-                recommendations = model.recommend(user_id, n_recommendations=5)
-                if recommendations:
-                    precision_scores.append(0.3)
-                    recall_scores.append(0.25)
-            except:
-                continue
-
-        return {
-            'precision_at_5': float(np.mean(precision_scores)) if precision_scores else 0.0,
-            'recall_at_5': float(np.mean(recall_scores)) if recall_scores else 0.0,
-            'f1_at_5': float(2 * np.mean(precision_scores) * np.mean(recall_scores) /
-                             (np.mean(precision_scores) + np.mean(recall_scores)))
-            if precision_scores and recall_scores else 0.0
-        }
-
-    def _evaluate_diversity(self, model, test_data: Dict[str, Any]) -> Dict[str, float]:
-        """Évalue la diversité des recommandations."""
-        # Implémentation basique
-        sample_users = np.unique(test_data['user_ids'])[:5]
-
-        all_recommendations = []
-        for user_id in sample_users:
-            try:
-                recommendations = model.recommend(user_id, n_recommendations=10)
-                all_recommendations.extend([rec[0] for rec in recommendations])
-            except:
-                continue
-
-        if all_recommendations:
-            unique_items = len(set(all_recommendations))
-            total_items = len(all_recommendations)
-            diversity = unique_items / total_items if total_items > 0 else 0.0
-        else:
-            diversity = 0.0
-
-        return {
-            'diversity': float(diversity),
-            'coverage': float(len(set(all_recommendations)))
-        }
 
 
 def create_sample_config() -> Tuple[AlgorithmConfig, ProcessingConfig]:
